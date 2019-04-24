@@ -5,8 +5,9 @@ import AdminLocationViewScreen from '../components/admin/adminLocationView';
 // import EmployeeNavigator from './employee';
 
 const AdminNavigator = createStackNavigator({
-    AdminLocationViewScreen: { screen: AdminLocationViewScreen },
+  AdminLocationViewScreen: { screen: AdminLocationViewScreen },
     AdminOverViewScreen: { screen: AdminOverViewScreen },
+    
 
   },
   {

@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     height: 600,
     backgroundColor:'white',
   },
-  issuePanelView: {
+  issuePanelHeaderView: {
     height: 60,
     justifyContent:'center',
     alignItems:'center',
@@ -24,13 +24,30 @@ const styles = StyleSheet.create({
   panelHeaderText: {
     fontSize: 24,
   },
+
+
+  issueTextView : {
+    height: 40,
+    width: '90%',
+    justifyContent:'center',
+
+    alignSelf:'center',
+    marginTop:5,
+    marginBottom:5,
+  },
+
+  issueText:{
+    fontSize:16,
+    textAlign: 'left',
+  },
+
   issueItemScrollList: {
     height: 400,
 
   },
   issueItemView: {
     height: 50,
-    width: '80%',
+    width: '90%',
     paddingLeft:20,
     paddingRight:20,
     justifyContent:'center',
@@ -57,6 +74,7 @@ export default class IssueItemList extends Component {
     this.state ={
       showIssueItem:false,
       issueItems:null,
+      diagnosed_issues:null,
     }
   }
 
@@ -94,8 +112,19 @@ export default class IssueItemList extends Component {
   }
 
   renderPopupContent(){
-    const { role, currentFeature,openIssues} = this.props;
+    const { role,type,currentIssue,} = this.props;
+    let reported_issue = null;
     if(role === 'admin') {
+      if(currentIssue && this.state.issueItems) {
+        this.state.issueItems.map((issueItem)=> {
+          if(issueItem.id == currentIssue.reported_issue) {
+            reported_issue = issueItem.name;
+            if(reported_issue.toLowerCase().includes('other')) {
+              reported_issue = 'Other, ' + currentIssue.description;
+            }
+          }
+        })
+      }
 
     }else if(role === 'employee'){
 
@@ -103,9 +132,12 @@ export default class IssueItemList extends Component {
     let issueItemList = [];
     if(this.state.issueItems) {
       this.state.issueItems.map((issueItem)=> {
-        if(issueItem.type.toLowerCase().includes('pump')) {
+        if(issueItem.type.toLowerCase().includes(type)) {
           issueItemList.push(
-            <TouchableOpacity style={styles.issueItemView}>
+            <TouchableOpacity 
+              style={styles.issueItemView} 
+              key={issueItem.id}
+              >
               <Text style={styles.issueItemText}>
                 {issueItem.name}
               </Text>
@@ -115,24 +147,35 @@ export default class IssueItemList extends Component {
       })
     }
 
-
     return (
       <View>
-        <View style={styles.issuePanelView}>
+        <TouchableOpacity 
+          style={styles.issuePanelHeaderView}
+          onPress={this.props.closeIssuePanel}
+        >
           <Text style={styles.panelHeaderText}>
-            Reported Issues
+            Issue on {type}
           </Text>
-        </View>
+        </TouchableOpacity>
+        { 
+          reported_issue && 
+          <View style={styles.issueTextView}>
+            <Text style={styles.issueText}> Reported issue: { reported_issue  }</Text>
+          </View>
+        }
+
         <ScrollView style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
         {
           issueItemList
         }
         </ScrollView>
+
       </View>
     )
   }
 
   render() {
+    console.warn(this.props.showIssueItem,'true or false');
     return (
       <View style={styles.container}>
         <PopupDialog
@@ -140,7 +183,7 @@ export default class IssueItemList extends Component {
           dialogAnimation={slideAnimation}
           dialogStyle={styles.popupStyle}
           dismissOnTouchOutside={true}
-          visible={this.state.showIssueItem}
+          visible={this.props.showIssueItem}
         >
           <View>
           {

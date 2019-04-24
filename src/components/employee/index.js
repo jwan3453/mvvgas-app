@@ -7,27 +7,16 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { ListView } from 'realm/react-native';
-import storage from '../../../storage';
-import Button from '../../../lib/button'
-import Store1 from '../../map/store1';
-import Store2 from '../../map/store2';
-import Store3 from '../../map/store3';
-import Store4 from '../../map/store4';
-import Store5 from '../../map/store5';
-import Store10 from '../../map/store10';
-import { API_ROOT } from '../../../constans/setting';
+import storage from '../../storage';
+import Button from '../../lib/button'
+import Store1 from '../map/store1';
+import Store2 from '../map/store2';
+import Store3 from '../map/store3';
+import Store4 from '../map/store4';
+import Store5 from '../map/store5';
+import Store10 from '../map/store10';
+import { API_ROOT } from '../../constans/setting';
 import Toast from 'react-native-easy-toast';
-import {
-  Cell,
-  DataTable,
-  Header,
-  HeaderCell,
-  Row,
-  EditableCell,
-  CheckableCell,
-} from 'react-native-data-table';
-
 
 
 const styles = StyleSheet.create({
@@ -96,7 +85,7 @@ const styles = StyleSheet.create({
 });
 
 
-export default class AdminLocationView extends Component {
+export default class EmployeeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -104,8 +93,6 @@ export default class AdminLocationView extends Component {
       currentColumn:'',
       order:'asc',
     }
-    // this.renderHeader = this.renderHeader.bind(this);
-    // this.renderRow = this.renderRow.bind(this);
   }
   
   componentDidMount(){

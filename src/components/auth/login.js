@@ -92,16 +92,24 @@ class LoginScreen extends Component {
           key: 'apiToken',
           data: {
             role:  data.response.role?data.response.role:null,
-            token: data.response.api_token
+            token: data.response.api_token,
+            location: data.response.location?data.response.location:null,
           },
           expires: (new Date()).getTime()/1000 + (30 * 24 * 60 * 60),
         }).then((data)=>{
         
         });
 
-        dispatch(NavigationActions.navigate({
-          routeName: 'Admin',
-        }));
+        if( data.response.role === 1) {
+          dispatch(NavigationActions.navigate({
+            routeName: 'Admin',
+          }));
+        } else {
+          dispatch(NavigationActions.navigate({
+            routeName: 'Employee',
+          }));
+        }
+
 
       } else {
         console.warn();

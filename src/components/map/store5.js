@@ -76,12 +76,8 @@ export default class Store5 extends Component {
 
       ],
 
-
-
       tableData2:[
         [elementButton('')],
-
-
       ],
 
       tableData3:[
