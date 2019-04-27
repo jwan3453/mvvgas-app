@@ -14,6 +14,7 @@ import Toast from 'react-native-easy-toast';
 import { API_ROOT } from '../../constans/setting';
 import LoadingIndicator from '../../lib/loadingIndicator';
 import storage from '../../storage';
+import CommonHeader from '../../lib/commonHeader'
 
 const styles = StyleSheet.create({
   container: {
@@ -107,12 +108,12 @@ class LoginScreen extends Component {
         } else {
           dispatch(NavigationActions.navigate({
             routeName: 'Employee',
+            params:{location:data.response.location}
           }));
         }
 
 
       } else {
-        console.warn();
         this.refs.toast.show('Wrong pin, please try again');
       }
     })
@@ -129,14 +130,13 @@ class LoginScreen extends Component {
   render(){
     return(
       <View style={styles.container}>
-
+    
+        <CommonHeader
+        />
         {
           this.state.loading &&
           <LoadingIndicator />
         }
-
-        <View style={styles.logoView}>
-        </View>
         <Text style={styles.pinCodeText}>Please Enter Pin Code</Text>
         <TextInput
           style={styles.textInput}

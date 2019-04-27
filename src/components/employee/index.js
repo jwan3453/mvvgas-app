@@ -17,6 +17,8 @@ import Store5 from '../map/store5';
 import Store10 from '../map/store10';
 import { API_ROOT } from '../../constans/setting';
 import Toast from 'react-native-easy-toast';
+import LoadingIndicator from '../../lib/loadingIndicator';
+import CommonHeader from '../../lib/commonHeader'
 
 
 const styles = StyleSheet.create({
@@ -92,6 +94,8 @@ export default class EmployeeScreen extends Component {
       openIssues:null,
       currentColumn:'',
       order:'asc',
+      token:null,
+      loading:false,
     }
   }
   
@@ -101,11 +105,16 @@ export default class EmployeeScreen extends Component {
       key: 'apiToken',
     }).then(token => {
       this.fetchOpenIssues(token);
+      this.setState({
+        token
+      })
     }).catch((error) => {console.warn(error) });
   }
 
   fetchOpenIssues (token){
-    fetch(API_ROOT+ '/api/issues/openissues/location/10', {
+    this.setState({loading:true})
+    const { location }  = this.props.navigation.state.params;
+    fetch(API_ROOT+ '/api/issues/openissues/location/'+ location, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -119,9 +128,10 @@ export default class EmployeeScreen extends Component {
           openIssues:data.list
         })
       }
-
+      this.setState({loading:false})
     })
     .catch((error) => {
+      this.setState({loading:false})
       this.refs.toast.show('Something went wrong, contact admin')
     });
   }
@@ -175,13 +185,86 @@ export default class EmployeeScreen extends Component {
   };
   
   render() {
+    const { location }  = this.props.navigation.state.params;
+    const {dispatch} = this.props.navigation;
+    console.warn('dispatch', dispatch)
     return (
-      <ScrollView style={styles.container}>
-  
-          <Store10 size={'regular'} openIssues={this.state.openIssues}/>
+      <View style={styles.container}>
+      <CommonHeader
+        needLogout={true}
+        headerText={'Tacoma Market #' + location}
+        dispatch={dispatch}
+      />
+      <ScrollView >
+      {
+        this.state.loading &&
+        <LoadingIndicator />
+      }
+      {
+        location == 1 &&
+        <Store1
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+
+        />
+      }
+      {
+        location == 2 &&
+        <Store2
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 3 &&
+        <Store3
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 4 &&
+        <Store4
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 5 &&
+        <Store5
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 10 &&
+        <Store10
+          role='employee' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }                              
+
     
-       
-        <View style={styles.openIssuesListView}>
+        {
+          <View style={styles.openIssuesListView}>
           <View style={styles.openIssueListHeader}>
             <Text style={styles.openIssueText}>
               Open Issues
@@ -244,6 +327,7 @@ export default class EmployeeScreen extends Component {
             onEndReachedThreshold={0.1}
           />
         </View>
+        }
         <Toast
           ref="toast"
           position='top'
@@ -251,6 +335,7 @@ export default class EmployeeScreen extends Component {
           style={{ zIndex: 100, backgroundColor: 'black' }}
         />
       </ScrollView>
+      </View>
     )
   }
 }

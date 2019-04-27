@@ -4,6 +4,7 @@ import { Table, TableWrapper,Col, Cols, Cell } from 'react-native-table-componen
 import IssueItemList from './issueItemList';
 
 
+
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
@@ -67,8 +68,8 @@ const styles = StyleSheet.create({
 
   },
   smallStoreView: {
-    width:120,
-    height:80,
+    width:100,
+    height:60,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,
@@ -115,8 +116,8 @@ export default class Store10 extends Component {
       if(openIssues) {
         openIssues.map((issue)=> {
           if(issue.feature.toLowerCase().includes(feature)){
-            let pumpNo = /(?!Pump #)\d+/.exec(issue.feature);
-            if(value == pumpNo[0]) {
+            let pumpNo = issue.feature.match(/Pump #(.*)/)[1];
+            if(value == pumpNo) {
               selectIssue = issue;
               issued = true;
             }
@@ -125,7 +126,7 @@ export default class Store10 extends Component {
       }
     }
 
-    return (<TouchableOpacity onPress={() => this.showIssueItemList('pump', selectIssue)} style={[{flex:1}, issued &&{backgroundColor:'white'} ]}>
+    return (<TouchableOpacity onPress={() => this.showIssueItemList('Pump', selectIssue, value)} style={[{flex:1}, issued &&{backgroundColor:'red'} ]}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>{value}</Text>
       </View>
@@ -137,6 +138,7 @@ export default class Store10 extends Component {
     currentSelectIssue:null,
     selectFeatureType:'',
     showIssueItem:false,
+    feature:'',
     tableData1: [
       [this.elementButton('28'), this.elementButton('28D')],
       [this.elementButton('27'), this.elementButton('27D')],
@@ -208,13 +210,19 @@ export default class Store10 extends Component {
   // }
 
 
-  showIssueItemList(type,selectIssue) {
-    console.warn(type,selectIssue);
-    if(selectIssue !== null ) {
+  showIssueItemList(type,selectIssue,value) {
+    if( (selectIssue !== null && this.props.role == 'admin'  ) || ( this.props.role == 'employee'  && selectIssue === null) ){
+      let feature = '';
+      if(type === 'Pump') {
+        feature = type + ' #'+value;
+      } else {
+        feature = type;
+      }
       this.setState({
         selectFeatureType:type,
         currentSelectIssue:selectIssue,
         showIssueItem:true,
+        feature,
       })
     }
   }
@@ -245,8 +253,8 @@ export default class Store10 extends Component {
             </Table>
 
             <TouchableOpacity 
-              style={[size==='small'?styles.samllCarWashView:styles.carWashView, carwashIssue && {backgroundColor:'white'}]}
-              onPress={()=>this.showIssueItemList('car wash',carwashIssue)}
+              style={[size==='small'?styles.samllCarWashView:styles.carWashView, carwashIssue && {backgroundColor:'red'}]}
+              onPress={()=>this.showIssueItemList('Car Wash',carwashIssue)}
             >
               <Text style={{textAlign:'center'}}>Car Wash</Text>
             </TouchableOpacity>
@@ -254,8 +262,8 @@ export default class Store10 extends Component {
 
           <View style={size==='small'?styles.smallMapSectionView:styles.mapSectionView}>
             <TouchableOpacity 
-              style={[size==='small'?styles.smallStoreView:styles.storeView,storeIssue && {backgroundColor:'white'}]}
-              onPress={()=>this.showIssueItemList('store',storeIssue)}
+              style={[size==='small'?styles.smallStoreView:styles.storeView,storeIssue && {backgroundColor:'red'}]}
+              onPress={()=>this.showIssueItemList('Store',storeIssue)}
             >
               <Text style={{textAlign:'center'}}>Store</Text>
             </TouchableOpacity>
@@ -287,7 +295,11 @@ export default class Store10 extends Component {
 
         </View>
         <IssueItemList 
-          role={'admin'} 
+          feature={this.state.feature}
+          location={10}
+          showToast={(msg)=>this.props.showToast(msg)}
+          fetchOpenIssues={(token=>this.props.fetchOpenIssues(token))}
+          role={this.props.role} 
           type={this.state.selectFeatureType}
           currentIssue={this.state.currentSelectIssue} 
           showIssueItem={this.state.showIssueItem}

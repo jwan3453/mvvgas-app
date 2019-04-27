@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Table, TableWrapper,Col, Cols, } from 'react-native-table-component';
+import IssueItemList from './issueItemList';
 
 
 const styles = StyleSheet.create({
@@ -60,51 +61,127 @@ const styles = StyleSheet.create({
 export default class Store5 extends Component {
   constructor(props) {
     super(props);
-    const elementButton = (value) => (
-      <TouchableOpacity onPress={() => this._alertIndex(value)} style={{flex:1}}>
-        <View style={styles.btn}>
-          <Text style={styles.btnText}>{value}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+  }
+  elementButton (value, props)  {
+    let issued  = false;
+    let feature = 'pump';
+    let selectIssue = null;
+    if(props !== undefined) {
+      const { openIssues } = props;
+      if(openIssues) {
+        openIssues.map((issue)=> {
+          if(issue.feature.toLowerCase().includes(feature)){
+            let pumpNo = issue.feature.match(/Pump #(.*)/)[1];
+            if(value == pumpNo) {
+              selectIssue = issue;
+              issued = true;
+            }
+          }
+        })
+      }
+    }
+    return (<TouchableOpacity onPress={() => this.showIssueItemList('Pump', selectIssue, value)} style={[{flex:1}, issued &&{backgroundColor:'red'} ]}>
+      <View style={styles.btn}>
+        <Text style={styles.btnText}>{value}</Text>
+      </View>
+    </TouchableOpacity>)
+  }
 
-    this.state = {
+  state = {
+    currentSelectIssue:null,
+    selectFeatureType:'',
+    showIssueItem:false,
+    feature:'',
+    tableData1:[
+      [this.elementButton('10'), this.elementButton('8'),this.elementButton('8D')],
+      [this.elementButton('9'), this.elementButton('7'),this.elementButton('7D')],
 
-      tableData1:[
-        [elementButton('10'), elementButton('8'),elementButton('8D')],
-        [elementButton('9'), elementButton('7'),elementButton('7D')],
+    ],
 
-      ],
+    tableData2:[
+      [this.elementButton('')],
+    ],
 
-      tableData2:[
-        [elementButton('')],
-      ],
+    tableData3:[
+      [this.elementButton('6')],
+      [this.elementButton('5')]
 
-      tableData3:[
-        [ elementButton('6')],
-        [elementButton('5')]
+    ],
 
-      ],
+    tableData4:[
+      [this.elementButton('2'),this.elementButton('4'),this.elementButton('4D')],
+      [this.elementButton('1'),this.elementButton('3'),this.elementButton('3D')],
+    ],
+  }
 
-      tableData4:[
-        [elementButton('2'),elementButton('4'),elementButton('4D')],
-        [elementButton('1'),elementButton('3'),elementButton('3D')],
-      ],
+  componentWillReceiveProps(nextProps) {
+    if (this.props.openIssues !== nextProps.openIssues) {
+      this.setState({
+        tableData1:[
+          [this.elementButton('10',nextProps), this.elementButton('8',nextProps),this.elementButton('8D',nextProps)],
+          [this.elementButton('9',nextProps), this.elementButton('7',nextProps),this.elementButton('7D',nextProps)],
+    
+        ],
+    
+        tableData2:[
+          [this.elementButton('')],
+        ],
+    
+        tableData3:[
+          [this.elementButton('6',nextProps)],
+          [this.elementButton('5',nextProps)]
+    
+        ],
+    
+        tableData4:[
+          [this.elementButton('2',nextProps),this.elementButton('4',nextProps),this.elementButton('4D',nextProps)],
+          [this.elementButton('1',nextProps),this.elementButton('3',nextProps),this.elementButton('3D',nextProps)],
+        ],
+      });
     }
   }
 
-  _alertIndex(value) {
-    Alert.alert(`This is column ${value}`);
+  showIssueItemList(type,selectIssue,value) {
+    if( (selectIssue !== null && this.props.role == 'admin'  ) || ( this.props.role == 'employee'  && selectIssue === null) ){
+      let feature = '';
+      if(type === 'Pump') {
+        feature = type + ' #'+value;
+      } else {
+        feature = type;
+      }
+      this.setState({
+        selectFeatureType:type,
+        currentSelectIssue:selectIssue,
+        showIssueItem:true,
+        feature,
+      })
+    }
   }
 
   render() {
-    const {size} = this.props;
+    const {size,openIssues} = this.props;
+    let carwashIssue = null;
+    let storeIssue = null;
+    if(openIssues) {
+      openIssues.map((issue)=>{
+        if(issue.feature.toLowerCase().includes('car wash')) {
+          carwashIssue = issue;
+        } 
+        if(issue.feature.toLowerCase().includes('store')) {
+          storeIssue = issue;
+        } 
+ 
+      })
+    }
     return (
       <View style={styles.container}>
         <View style={styles.mapAreaView}>
-          <View style={size==='small'?styles.smallStoreView:styles.storeView}>
+          <TouchableOpacity 
+            style={[size==='small'?styles.smallStoreView:styles.storeView,storeIssue && {backgroundColor:'red'}]}
+            onPress={()=>this.showIssueItemList('Store',storeIssue)}
+          >
             <Text style={{textAlign:'center'}}>Store</Text>
-          </View>
+          </TouchableOpacity>
 
           <Table style={size==='small'?styles.smallTableView:styles.tableView}>
               <TableWrapper style={size==='small'? {width: 66}: {width: 200}} >
@@ -126,9 +203,20 @@ export default class Store5 extends Component {
             </TableWrapper>
 
           </Table>
-
-          
         </View>
+        <IssueItemList 
+          feature={this.state.feature}
+          location={5}
+          showToast={(msg)=>this.props.showToast(msg)}
+          fetchOpenIssues={(token=>this.props.fetchOpenIssues(token))}
+          role={this.props.role} 
+          type={this.state.selectFeatureType}
+          currentIssue={this.state.currentSelectIssue} 
+          showIssueItem={this.state.showIssueItem}
+          closeIssuePanel={()=>{this.setState({
+            showIssueItem:false,
+          })}}
+        />
       </View>
     )
   }

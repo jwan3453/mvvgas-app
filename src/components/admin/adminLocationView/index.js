@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { ListView } from 'realm/react-native';
 import storage from '../../../storage';
 import Button from '../../../lib/button'
 import Store1 from '../../map/store1';
@@ -18,16 +17,9 @@ import Store5 from '../../map/store5';
 import Store10 from '../../map/store10';
 import { API_ROOT } from '../../../constans/setting';
 import Toast from 'react-native-easy-toast';
-import {
-  Cell,
-  DataTable,
-  Header,
-  HeaderCell,
-  Row,
-  EditableCell,
-  CheckableCell,
-} from 'react-native-data-table';
-
+import LoadingIndicator from '../../../lib/loadingIndicator';
+import CommonHeader from '../../../lib/commonHeader'
+import { NavigationActions } from 'react-navigation';
 
 
 const styles = StyleSheet.create({
@@ -37,8 +29,9 @@ const styles = StyleSheet.create({
   },
   openIssuesListView: {
     marginTop: 20,
-    paddingLeft:80,
-    paddingRight:80,
+    paddingLeft:50,
+    paddingRight:50,
+    paddingBottom:50,
   },
 
   openIssueListHeader:{
@@ -88,24 +81,29 @@ const styles = StyleSheet.create({
   },
   rowStyle: {
     flexDirection:'row',
+    borderLeftWidth:1,
+    borderRightWidth:1,
+    borderBottomWidth:1,
   },
   columnCell: {
-    padding:10,
+     paddingTop:10,
+     paddingBottom:10,
+     paddingLeft:10,
   },
 
 });
 
 
-export default class AdminLocationView extends Component {
+export default class EmployeeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       openIssues:null,
       currentColumn:'',
       order:'asc',
+      token:null,
+      loading:false,
     }
-    // this.renderHeader = this.renderHeader.bind(this);
-    // this.renderRow = this.renderRow.bind(this);
   }
   
   componentDidMount(){
@@ -114,11 +112,16 @@ export default class AdminLocationView extends Component {
       key: 'apiToken',
     }).then(token => {
       this.fetchOpenIssues(token);
+      this.setState({
+        token
+      })
     }).catch((error) => {console.warn(error) });
   }
 
   fetchOpenIssues (token){
-    fetch(API_ROOT+ '/api/issues/openissues/location/10', {
+    this.setState({loading:true})
+    const { location }  = this.props.navigation.state.params;
+    fetch(API_ROOT+ '/api/issues/openissues/location/'+ location, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -132,9 +135,10 @@ export default class AdminLocationView extends Component {
           openIssues:data.list
         })
       }
-
+      this.setState({loading:false})
     })
     .catch((error) => {
+      this.setState({loading:false})
       this.refs.toast.show('Something went wrong, contact admin')
     });
   }
@@ -165,21 +169,21 @@ export default class AdminLocationView extends Component {
   renderItem = ({ item, index }) => {
     return (
       <View style={styles.rowStyle} index={index}>
-        <View style={[styles.columnCell,{flex:1}]}>
+        <View style={[styles.columnCell,{flex:2}]}>
           <Text>{item.created_at}</Text>
         </View>
         <View style={[styles.columnCell,{flex:1}]}>
-          <Text>{item.reported_issue}</Text>
+          <Text>{item.status}</Text>
+        </View>        
+        <View style={[styles.columnCell,{flex:2}]}>
+          <Text>{item.reported_issue_text}</Text>
         </View>
         <View style={[styles.columnCell,{flex:2}]}>
           <Text>{item.diagnosed_issue}</Text>
         </View>
-        <View style={[styles.columnCell,{flex:3}]}>
+        <View style={[styles.columnCell,{flex:2}]}>
           <Text>{item.description}</Text>
-        </View>        
-        <View style={[styles.columnCell,{flex:1}]}>
-          <Text>{item.location}</Text>
-        </View>         
+        </View>               
         <View style={[styles.columnCell,{flex:1}]}>
           <Text>{item.feature}</Text>
         </View>          
@@ -188,14 +192,87 @@ export default class AdminLocationView extends Component {
   };
   
   render() {
+    const { location }  = this.props.navigation.state.params;
+    const {dispatch} = this.props.navigation;
     return (
-      <ScrollView style={styles.container}>
-  
-          <Store10 size={'regular'} openIssues={this.state.openIssues}/>
+      <View style={styles.container}>
+      <CommonHeader
+        needLogout={true}
+        needGoMainMenu={true}
+        headerText={'Tacoma Market #' + location}
+        dispatch={dispatch}
+      />
+      <ScrollView >
+      {
+        this.state.loading &&
+        <LoadingIndicator />
+      }
+      {
+        location == 1 &&
+        <Store1
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+
+        />
+      }
+      {
+        location == 2 &&
+        <Store2
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 3 &&
+        <Store3
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 4 &&
+        <Store4
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 5 &&
+        <Store5
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }
+      {
+        location == 10 &&
+        <Store10
+          role='admin' 
+          size={'regular'} 
+          openIssues={this.state.openIssues}
+          showToast={(msg) =>this.refs.toast.show(msg)}
+          fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+        />
+      }                              
+
     
-       
-        <View style={styles.openIssuesListView}>
-          <View style={styles.openIssueListHeader}>
+        {
+          <View style={styles.openIssuesListView}>
+            <View style={styles.openIssueListHeader}>
             <Text style={styles.openIssueText}>
               Open Issues
             </Text>
@@ -203,20 +280,30 @@ export default class AdminLocationView extends Component {
               style={styles.closedIssueBtn}
               title="See Closed Issue"
               titleStyle={styles.closedIssueBtnText}
-              onPress={this.login}
+              onPress={()=>{
+                dispatch(NavigationActions.navigate({
+                  routeName: 'ClosedIssueViewScreen',
+                }))
+              }}
             />
           </View>
 
 
-          <View style={styles.tableHeadView}>
+            <View style={styles.tableHeadView}>
             <TouchableOpacity 
-              style={[styles.headCell,{flex:1}]}
+              style={[styles.headCell,{flex:2}]}
               onPress={() => this.onColumnSort('created_at')}
             >
               <Text style={styles.headCellText}>Time Stamp</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.headCell,{flex:1}]}
+              onPress={() => this.onColumnSort('status')}
+            > 
+              <Text>Status</Text>
+            </TouchableOpacity>            
+            <TouchableOpacity 
+              style={[styles.headCell,{flex:2}]}
               onPress={() => this.onColumnSort('reported_issue')}
             > 
               <Text>Reported Issue</Text>
@@ -228,17 +315,11 @@ export default class AdminLocationView extends Component {
               <Text>Diagnosed Issues</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={[styles.headCell,{flex:3}]}
+              style={[styles.headCell,{flex:2}]}
               onPress={() => this.onColumnSort('description')}
             >
               <Text>Description</Text>
-            </TouchableOpacity>            
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('location')}
-            >
-              <Text>Location</Text>
-            </TouchableOpacity>            
+            </TouchableOpacity>                     
             <TouchableOpacity style={[styles.headCell,{flex:1}]}
               style={[styles.headCell,{flex:1}]}
               onPress={() => this.onColumnSort('feature')}
@@ -257,6 +338,7 @@ export default class AdminLocationView extends Component {
             onEndReachedThreshold={0.1}
           />
         </View>
+        }
         <Toast
           ref="toast"
           position='top'
@@ -264,6 +346,7 @@ export default class AdminLocationView extends Component {
           style={{ zIndex: 100, backgroundColor: 'black' }}
         />
       </ScrollView>
+      </View>
     )
   }
 }
