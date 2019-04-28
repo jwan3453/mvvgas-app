@@ -298,31 +298,26 @@ export default class EmployeeScreen extends Component {
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('status')}
             > 
               <Text>Status</Text>
             </TouchableOpacity>            
             <TouchableOpacity 
               style={[styles.headCell,{flex:2}]}
-              onPress={() => this.onColumnSort('reported_issue')}
             > 
               <Text>Reported Issue</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.headCell,{flex:2}]}
-              onPress={() => this.onColumnSort('diagnoed_issues')}
             >
               <Text>Diagnosed Issues</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.headCell,{flex:2}]}
-              onPress={() => this.onColumnSort('description')}
             >
               <Text>Description</Text>
             </TouchableOpacity>                     
             <TouchableOpacity style={[styles.headCell,{flex:1}]}
               style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('feature')}
             >
               <Text>Feature</Text>
             </TouchableOpacity>
