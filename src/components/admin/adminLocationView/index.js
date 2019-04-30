@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   FlatList,
+  Image
 } from 'react-native';
 import storage from '../../../storage';
 import Button from '../../../lib/button'
@@ -48,14 +49,14 @@ const styles = StyleSheet.create({
     width: 160,
     height: 40,
     borderWidth:1,
-    borderColor:'black',
+    // borderColor:'black',
     borderRadius: 15,
     justifyContent:'center',
   },
   closedIssueBtnText: {
   
     textAlign:'center',
-    color:'black',
+    // color:'black',
     fontSize: 16,
   },
   issueListTable: {
@@ -79,6 +80,12 @@ const styles = StyleSheet.create({
   headCellText: {
     fontSize:16,
   },
+  sortIcon: {
+    height:18,
+    width:18,
+    marginTop:5,
+    marginLeft:10,
+  },
   rowStyle: {
     flexDirection:'row',
     borderLeftWidth:1,
@@ -86,10 +93,16 @@ const styles = StyleSheet.create({
     borderBottomWidth:1,
   },
   columnCell: {
-     paddingTop:10,
-     paddingBottom:10,
-     paddingLeft:10,
+    paddingTop:15,
+    paddingBottom:15,
+    paddingLeft:10,
   },
+  noMatchText: {
+    fontSize:20,
+    textAlign:'center',
+    paddingTop:10,
+  },
+
 
 });
 
@@ -199,6 +212,7 @@ export default class EmployeeScreen extends Component {
       <CommonHeader
         needLogout={true}
         needGoMainMenu={true}
+        refreshIssueList={()=>this.props.navigation.state.params.refreshList()}
         headerText={'Tacoma Market #' + location}
         dispatch={dispatch}
       />
@@ -295,6 +309,10 @@ export default class EmployeeScreen extends Component {
               onPress={() => this.onColumnSort('created_at')}
             >
               <Text style={styles.headCellText}>Time Stamp</Text>
+              <Image 
+                style={styles.sortIcon}
+                source={require('../../../lib/images/sort.png')}
+              />
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.headCell,{flex:1}]}
@@ -323,15 +341,19 @@ export default class EmployeeScreen extends Component {
             </TouchableOpacity>
           </View>
 
+          {
+            this.state.openIssues && this.state.openIssues.length > 0 ?
+            <FlatList
+              legacyImplementation={true}
+              data={this.state.openIssues}
+              extraData={this.state}
+              keyExtractor={this.keyExtractor}
+              renderItem={this.renderItem}
+              onEndReachedThreshold={0.1}
+            />:
+            <Text style={styles.noMatchText}>No matching records found</Text>
+          }
 
-          <FlatList
-            legacyImplementation={true}
-            data={this.state.openIssues}
-            extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-            onEndReachedThreshold={0.1}
-          />
         </View>
         }
         <Toast

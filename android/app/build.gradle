@@ -104,13 +104,21 @@ android {
     defaultConfig {
         applicationId "com.mvvgas"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        targetSdkVersion 26 //rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         ndk {  
                 abiFilters "armeabi-v7a", "x86"  
             }
     }
+    signingConfigs { 
+       release { 
+        storeFile file("/Users/jacky/Documents/mvvgas/mvvgas/android/keystores/my-release-key.keystore")
+        storePassword "sitecrafting"
+        keyAlias "my-key-alias"
+        keyPassword "sitecrafting"
+    }
+     }
     splits {
         abi {
             reset()
@@ -123,6 +131,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+             signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release

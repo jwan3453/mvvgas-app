@@ -5,7 +5,9 @@ import {
   Text,
   Image,
   TextInput,
-  Alert
+  KeyboardAvoidingView,
+  Alert,
+  Platform
 } from 'react-native';
 
 import Button from '../../lib/button';
@@ -23,16 +25,10 @@ const styles = StyleSheet.create({
     alignItems:'center',
  
   },
-  logoView: {
-  },
-  logoImage: {
-    width:  220,
-    resizeMode:'contain'
-  },
   pinCodeText: {
     fontSize:20,
     padding:30,
-    marginTop: 200
+
   },  
   textInput: {
     textAlign: 'center',
@@ -44,11 +40,16 @@ const styles = StyleSheet.create({
     width: 400,
     borderRadius: 20,
   },
+  keyboardAvoidView: {
+    alignItems:'center',
+    justifyContent:'center',
+    flex:1,
+  },
   registerBtnStyle:{
     width:250,
     height: 50,
     backgroundColor: '#93C1F3',
-    marginTop:20,
+    marginTop:40,
     borderRadius: 20,
     justifyContent:'center',
   },
@@ -67,6 +68,30 @@ class LoginScreen extends Component {
       loading:false,
       pin: '',
     }
+  }
+
+
+  componentDidMount(){
+    const { navigation } = this.props;
+    const { dispatch } = navigation;
+    this.setState({loading:true});
+    storage.load({
+      key:'apiToken'
+    }).then((token)=>{
+      if(token.role === 1) {
+        dispatch(NavigationActions.navigate({
+          routeName: 'Admin',
+        }));
+      } else {
+        dispatch(NavigationActions.navigate({
+          routeName: 'Employee',
+          params:{location:token.location}
+        }));
+      }
+      this.setState({loading:false});
+    }).catch(error => {
+      this.setState({loading:false});
+    })
   }
 
   //submit register
@@ -137,22 +162,33 @@ class LoginScreen extends Component {
           this.state.loading &&
           <LoadingIndicator />
         }
-        <Text style={styles.pinCodeText}>Please Enter Pin Code</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholderTextColor={'white'}
-          returnKeyType="go"
-          underlineColorAndroid='transparent'
-          secureTextEntry
-          onChangeText={this.handlePinChange}
-          value={this.state.pin}
-        />
-        <Button
-          style={styles.registerBtnStyle}
-          title="Login"
-          titleStyle={styles.registerBtnTextStyle}
-          onPress={this.login}
-        />
+        <KeyboardAvoidingView 
+          behavior="padding" 
+          style={styles.keyboardAvoidView}
+          keyboardVerticalOffset={
+            Platform.select({
+               ios: () => 0,
+               android: () => -250
+            })()
+          }
+        >
+          <Text style={styles.pinCodeText}>Please Enter Pin Code</Text>
+          <TextInput
+            style={styles.textInput}
+            placeholderTextColor={'white'}
+            returnKeyType="go"
+            underlineColorAndroid='transparent'
+            secureTextEntry
+            onChangeText={this.handlePinChange}
+            value={this.state.pin}
+          />
+          <Button
+            style={styles.registerBtnStyle}
+            title="Login"
+            titleStyle={styles.registerBtnTextStyle}
+            onPress={this.login}
+          />
+        </KeyboardAvoidingView>
         <Toast
           ref="toast"
           position='top'

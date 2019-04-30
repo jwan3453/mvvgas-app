@@ -6,9 +6,10 @@ import { getTransitionConfig } from '../lib/slideScreenConfig';
 // import EmployeeNavigator from './employee';
 
 const AdminNavigator = createStackNavigator({
-  ClosedIssueViewScreen: {screen:ClosedIssueViewScreen},
+  
     AdminOverViewScreen: { screen: AdminOverViewScreen },
     AdminLocationViewScreen: { screen: AdminLocationViewScreen },
+    ClosedIssueViewScreen: {screen:ClosedIssueViewScreen},
 
   },
   {

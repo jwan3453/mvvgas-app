@@ -16,15 +16,15 @@ const styles = StyleSheet.create({
     zIndex:100,
   },
   indicatorView: {
-    height: 100,
-    width: 100,
+    height: 120,
+    width: 120,
     backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
   },
   loadingText: {
-    fontSize: 20,
+    fontSize: 18,
     color: 'white',
     marginBottom: 3,
   }

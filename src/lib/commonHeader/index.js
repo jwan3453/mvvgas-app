@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     height:80,
     width:'100%',
     borderBottomWidth:1,
-    borderColor:'black',
+    //borderColor:'black',
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'space-between',
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     width:150,
     height: 40,
     borderWidth:1,
-    borderColor:'black',
+    //borderColor:'black',
     borderRadius:5,
     alignItems:'center',
     justifyContent:'center',
@@ -75,12 +75,12 @@ export default class CommonHeder extends Component {
   }
 
   render() {
-    const { needLogout, needViewClosedIssue, needGoMainMenu, headerText,dispatch } = this.props;
+    const { needLogout, needViewClosedIssue, needGoMainMenu, headerText,dispatch,refreshIssueList } = this.props;
     return (
       <View style={styles.container}>
 
         <View style={styles.leftArea}> 
-          <Image 
+          <Image  
               style={styles.logoIcon}
               source={require('../images/logo.png')}
           />
@@ -90,6 +90,9 @@ export default class CommonHeder extends Component {
             <TouchableOpacity 
               style={styles.headerBtn}
               onPress={()=>{
+                if(refreshIssueList) {
+                  refreshIssueList();
+                }
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminOverViewScreen',
                 }))

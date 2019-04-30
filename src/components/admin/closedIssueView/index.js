@@ -24,15 +24,16 @@ const styles = StyleSheet.create({
   },
   searchFilterView: {
     width:'95%',
-    // height:90,    
-    // flexDirection:'row',
+    height:90,    
+    flexDirection:'row',
     alignSelf:'center',
-    borderWidth:1,
-    borderColor:'red',
+    // borderWidth:1,
+    // borderColor:'red',
 
   },
   filterItemView: {
     marginRight:20,
+
   },
   filterText: {
     fontSize:18,
@@ -47,24 +48,25 @@ const styles = StyleSheet.create({
     height:40,
     borderWidth:1,
     flexDirection:'row',
-    // borderColor:'black',
+
     justifyContent:'space-between',
     alignItems:'center',
+    borderColor:'#C3C3C3',
   },
   filterInputText: {
     fontSize:14,
     paddingLeft:15,
   },
-  sortIcon: {
+  dropdownIcon: {
     height:14,
     width:14,
-    marginRight:10,
+    marginRight:8,
   },
   searchBtn: {
     width:120,
     height: 40,
     borderWidth:1,
-    borderColor:'black',
+    //borderColor:'black',
     borderRadius:5,
     alignItems:'center',
     justifyContent:'center',
@@ -74,10 +76,11 @@ const styles = StyleSheet.create({
   },
 
   closedIssueListView: {
-    marginTop: 20,
-    paddingLeft:50,
-    paddingRight:50,
+    // marginTop: 20,
+    paddingTop:20,
     paddingBottom:50,
+    width:'95%',
+    alignSelf:'center',
   },
 
   issueListTable: {
@@ -99,6 +102,12 @@ const styles = StyleSheet.create({
   headCellText: {
     fontSize:16,
   },
+  sortIcon: {
+    height:18,
+    width:18,
+    marginTop:5,
+    marginLeft:10,
+  },
   rowStyle: {
     flexDirection:'row',
     borderLeftWidth:1,
@@ -106,9 +115,14 @@ const styles = StyleSheet.create({
     borderBottomWidth:1,
   },
   columnCell: {
-    paddingTop:10,
-    paddingBottom:10,
+    paddingTop:15,
+    paddingBottom:15,
     paddingLeft:10,
+  },
+  noMatchText: {
+    fontSize:20,
+    textAlign:'center',
+    paddingTop:10,
   },
 
   listPageView: {
@@ -195,7 +209,7 @@ export default class ClosedIssueViewScreen extends Component {
       this.getAllFilterList(token);
       this.setState({
         token
-      })
+      }, ()=>this.search('new'))
     }).catch((error) => {console.warn(error) });
   }
 
@@ -373,18 +387,20 @@ export default class ClosedIssueViewScreen extends Component {
   {
     let data =  this.state.closedIssueList;
     let order = this.state.order;
+
     if(sortColumn === this.state.currentColumn) {
       if(order === 'asc') {
         order='desc';
-        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
       } else {
         order='asc';
-        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
       }
     } else {
       order='desc';
-      data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+      data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
     }
+    console.warn(order,sortColumn)
     this.setState({
       closedIssueList:data,
       currentColumn:sortColumn,
@@ -616,8 +632,8 @@ export default class ClosedIssueViewScreen extends Component {
               >
                   <Text style={styles.filterInputText}>{this.state.selectedReportedIssueText}</Text>
                   <Image 
-                    style={styles.sortIcon}
-                    source={require('../../../lib/images/sort.png')}
+                    style={styles.dropdownIcon}
+                    source={require('../../../lib/images/dropdown.png')}
                   />
               </TouchableOpacity>
             </View>
@@ -630,8 +646,8 @@ export default class ClosedIssueViewScreen extends Component {
               >
                   <Text style={styles.filterInputText}>{this.state.selectedDiagnosedIssueText}</Text>
                   <Image 
-                    style={styles.sortIcon}
-                    source={require('../../../lib/images/sort.png')}
+                    style={styles.dropdownIcon}
+                    source={require('../../../lib/images/dropdown.png')}
                   />
               </TouchableOpacity> 
             </View>
@@ -644,8 +660,8 @@ export default class ClosedIssueViewScreen extends Component {
               >
                   <Text style={styles.filterInputText}>{this.state.selectedLocationText}</Text>
                   <Image 
-                    style={styles.sortIcon}
-                    source={require('../../../lib/images/sort.png')}
+                    style={styles.dropdownIcon}
+                    source={require('../../../lib/images/dropdown.png')}
                   />
               </TouchableOpacity> 
             </View>   
@@ -658,13 +674,13 @@ export default class ClosedIssueViewScreen extends Component {
               >
                   <Text style={styles.filterInputText}>{this.state.selectedFeatureText}</Text>
                   <Image 
-                    style={styles.sortIcon}
-                    source={require('../../../lib/images/sort.png')}
+                    style={styles.dropdownIcon}
+                    source={require('../../../lib/images/dropdown.png')}
                   />
               </TouchableOpacity> 
             </View>         
 
-            <View style={styles.filterItemView}>
+            <View style={[styles.filterItemView,{marginTop:33,}]}>
               <TouchableOpacity 
                 style={styles.searchBtn}
                 onPress={()=>this.search('new')}
@@ -680,7 +696,11 @@ export default class ClosedIssueViewScreen extends Component {
                 style={[styles.headCell,{flex:2}]}
                 onPress={() => this.onColumnSort('closedAt')}
               >
-                <Text style={styles.headCellText}>Time Stamp</Text>
+                <Text style={styles.headCellText}>Date closed</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.headCell,{flex:1}]}
@@ -714,40 +734,50 @@ export default class ClosedIssueViewScreen extends Component {
               </TouchableOpacity>
             </View>
 
-            <FlatList
-              legacyImplementation={true}
-              data={this.state.closedIssueList}
-              extraData={this.state}
-              keyExtractor={this.keyExtractor}
-              renderItem={this.renderItem}
-              onEndReachedThreshold={0.1}
-            />
 
-            <View style={styles.listPageView}>
-              <TouchableOpacity 
-                style={styles.pagingIconView}
-                onPress={()=>this.movePage('backward')}
-              >
-              <Image 
-                style={styles.pagingIcon}
-                source={require('../../../lib/images/pageLeft.png')}
-              />
-              </TouchableOpacity>
+            {
+              this.state.closedIssueList && this.state.closedIssueList.length > 0 ?
+              <FlatList
+                legacyImplementation={true}
+                data={this.state.closedIssueList}
+                extraData={this.state}
+                keyExtractor={this.keyExtractor}
+                renderItem={this.renderItem}
+                onEndReachedThreshold={0.1}
+              />:
+              <Text style={styles.noMatchText}>No matching records found</Text>
+            }
 
-              {
-                this.renderPageNumbers()
-              }
 
-              <TouchableOpacity 
-                style={styles.pagingIconView}
-                onPress={()=>this.movePage('forward')}
+
+            {
+              this.state.closedIssueList && this.state.closedIssueList.length > 0 &&
+              <View style={styles.listPageView}>
+                <TouchableOpacity 
+                  style={styles.pagingIconView}
+                  onPress={()=>this.movePage('backward')}
                 >
-              <Image 
-                style={styles.pagingIcon}
-                source={require('../../../lib/images/pageRight.png')}
-              />
-              </TouchableOpacity>
-            </View>
+                <Image 
+                  style={styles.pagingIcon}
+                  source={require('../../../lib/images/pageLeft.png')}
+                />
+                </TouchableOpacity>
+
+                {
+                  this.renderPageNumbers()
+                }
+
+                <TouchableOpacity 
+                  style={styles.pagingIconView}
+                  onPress={()=>this.movePage('forward')}
+                  >
+                <Image 
+                  style={styles.pagingIcon}
+                  source={require('../../../lib/images/pageRight.png')}
+                />
+                </TouchableOpacity>
+              </View>
+            }
           </View>
   
         </ScrollView>

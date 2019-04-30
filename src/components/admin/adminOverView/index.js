@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList,Image} from 'react-native';
 import { Table, TableWrapper,Col, Cols, Cell } from 'react-native-table-component';
 import { NavigationActions } from 'react-navigation';
 import Store1 from '../../map/store1';
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     flex:1,
     height:330,
     borderWidth:1,
-    borderColor:'black',
+    //borderColor:'black',
   },
   storeNameText: {
     paddingTop:10,
@@ -66,14 +66,14 @@ const styles = StyleSheet.create({
     width: 160,
     height: 40,
     borderWidth:1,
-    borderColor:'black',
+    //borderColor:'black',
     borderRadius: 15,
     justifyContent:'center',
   },
   closedIssueBtnText: {
   
     textAlign:'center',
-    color:'black',
+    //color:'black',
     fontSize: 16,
   },
   issueListTable: {
@@ -95,6 +95,12 @@ const styles = StyleSheet.create({
   headCellText: {
     fontSize:16,
   },
+  sortIcon: {
+    height:18,
+    width:18,
+    marginTop:5,
+    marginLeft:10,
+  },
   rowStyle: {
     flexDirection:'row',
     borderLeftWidth:1,
@@ -106,6 +112,12 @@ const styles = StyleSheet.create({
      paddingBottom:10,
      paddingLeft:10,
   },
+  noMatchText: {
+    fontSize:20,
+    textAlign:'center',
+    paddingTop:10,
+  },
+
 
 });
 
@@ -126,13 +138,15 @@ export default class AdminOverViewScreen extends Component {
     storage.load({
       key: 'apiToken',
     }).then(token => {
-      this.fetchAllOpenIssues(token);
+      this.setState({
+        token,
+      }, ()=>{this.fetchAllOpenIssues(token)});
+      
     }).catch((error) => {console.warn(error) });
   }
 
   fetchAllOpenIssues (token){
     this.setState({loading:true})
- 
     fetch(API_ROOT+ '/api/issues/openissues', {
       method: 'GET',
       headers: {
@@ -173,25 +187,29 @@ export default class AdminOverViewScreen extends Component {
     });
   }
 
+  refreshList = () => {
+    this.fetchAllOpenIssues(this.state.token);
+  }
+
 
   onColumnSort(sortColumn) 
   {
-    let data =  this.state.allOpenIssues;
+    let data =  this.state.allOpenIssuesNoSort;
     let order = this.state.order;
     if(sortColumn === this.state.currentColumn) {
       if(order === 'asc') {
         order='desc';
-        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
       } else {
         order='asc';
-        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
       }
     } else {
       order='desc';
-      data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+      data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
     }
     this.setState({
-      allOpenIssues:data,
+      allOpenIssuesNoSort:data,
       currentColumn:sortColumn,
       order,
     })
@@ -229,6 +247,8 @@ export default class AdminOverViewScreen extends Component {
     );
   }
 
+
+
   render() {
     const {dispatch} = this.props.navigation;
     return (
@@ -250,8 +270,12 @@ export default class AdminOverViewScreen extends Component {
               onPress={ ()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminLocationViewScreen',
-                  params:{location:1},
-                }))}
+                  params:{ 
+                          location:1,
+                          refreshList:this.refreshList,
+                        }   ,
+                }))
+              }
               }>
               <Text style={styles.storeNameText}>Tacoma Express #1</Text>
               <Store1 
@@ -267,8 +291,12 @@ export default class AdminOverViewScreen extends Component {
               onPress={ ()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminLocationViewScreen',
-                  params:{location:2},
-                }))}
+                  params:{ 
+                          location:2,
+                          refreshList:this.refreshList,
+                        }   ,
+                }))
+              }
               }>
               <Text style={styles.storeNameText}>Tacoma Express #2</Text>
               <Store2
@@ -284,8 +312,12 @@ export default class AdminOverViewScreen extends Component {
               onPress={ ()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminLocationViewScreen',
-                  params:{location:3},
-                }))}
+                  params:{ 
+                          location:3,
+                          refreshList:this.refreshList,
+                        }   ,
+                }))
+              }
               }>
               <Text style={styles.storeNameText}>Tacoma Express #3</Text>
               <Store3
@@ -303,8 +335,12 @@ export default class AdminOverViewScreen extends Component {
             onPress={ ()=>{
               dispatch(NavigationActions.navigate({
                 routeName: 'AdminLocationViewScreen',
-                params:{location:4},
-              }))}
+                params:{ 
+                        location:4,
+                        refreshList:this.refreshList,
+                      }   ,
+              }))
+            }
             }>
             <Text style={styles.storeNameText}>Tacoma Express #4</Text>
             <Store4
@@ -320,8 +356,12 @@ export default class AdminOverViewScreen extends Component {
               onPress={ ()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminLocationViewScreen',
-                  params:{location:5},
-                }))}
+                  params:{ 
+                          location:5,
+                          refreshList:this.refreshList,
+                        }   ,
+                }))
+              }
               }>
               <Text style={styles.storeNameText}>Tacoma Express #5</Text>
               <Store5
@@ -337,8 +377,12 @@ export default class AdminOverViewScreen extends Component {
               onPress={ ()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'AdminLocationViewScreen',
-                  params:{location:10},
-                }))}
+                  params:{ 
+                          location:10,
+                          refreshList:this.refreshList,
+                        }   ,
+                }))
+              }
               }>
               <Text style={styles.storeNameText}>Tacoma Express #10</Text>
               <Store10
@@ -376,6 +420,10 @@ export default class AdminOverViewScreen extends Component {
             onPress={() => this.onColumnSort('created_at')}
           >
             <Text style={styles.headCellText}>Time Stamp</Text>
+            <Image 
+              style={styles.sortIcon}
+              source={require('../../../lib/images/sort.png')}
+            />
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.headCell,{flex:1}]}
@@ -409,15 +457,19 @@ export default class AdminOverViewScreen extends Component {
           </TouchableOpacity>
         </View>
 
+        {
+          this.state.allOpenIssuesNoSort && this.state.allOpenIssuesNoSort.length > 0 ?
+            <FlatList
+            legacyImplementation={true}
+            data={this.state.allOpenIssuesNoSort}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+            onEndReachedThreshold={0.1}
+          /> :
+          <Text style={styles.noMatchText}>No matching records found</Text>
+        }
 
-        <FlatList
-          legacyImplementation={true}
-          data={this.state.allOpenIssuesNoSort}
-          extraData={this.state}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-          onEndReachedThreshold={0.1}
-        />
       </View>
         
         </ScrollView>

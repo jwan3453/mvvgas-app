@@ -3,6 +3,7 @@ import { StyleSheet,Alert, View, Text, TouchableOpacity,ScrollView,TextInput, Im
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import storage from '../../storage';
 import { API_ROOT } from '../../constans/setting';
+import LoadingIndicator from '../../lib/loadingIndicator';
 
 const styles = StyleSheet.create({
   container: { 
@@ -149,6 +150,7 @@ export default class IssueItemList extends Component {
       selectedReportIssue:null,
       issueDescription:'',
       continue:false,
+      loading:false,
     }
   }
 
@@ -213,7 +215,7 @@ export default class IssueItemList extends Component {
 
   createNewIssue(token){
 
-    this.props.closeIssuePanel();
+    this.setState({loading:true,})
     fetch(API_ROOT+ '/api/issues', {
       method: 'POST',
       headers: {
@@ -235,8 +237,12 @@ export default class IssueItemList extends Component {
       } else {
         Alert.alert('Unable to crate an issue');
       }
+      this.setState({loading:false,})
+      this.props.closeIssuePanel();
     })
     .catch((error) => {
+      this.setState({loading:false,})
+      this.props.closeIssuePanel();
       Alert.alert('Error when creating an issue');
       //this.props.showToast('Something went wrong, contact admin')
     });
@@ -262,7 +268,7 @@ export default class IssueItemList extends Component {
 
   updateCurrentIssue(token, status){
 
-    this.props.closeIssuePanel();
+    this.setState({loading:true,})
     console.warn(this.props.currentIssue.id);
     fetch(API_ROOT+ '/api/issues/' + this.props.currentIssue.id, {
       method: 'put',
@@ -284,9 +290,12 @@ export default class IssueItemList extends Component {
       } else {
         Alert.alert('Unable to update the issue');
       }
+      this.setState({loading:false,})
+      this.props.closeIssuePanel();
     })
     .catch((error) => {
-      console.warn(error);
+      this.setState({loading:false,})
+      this.props.closeIssuePanel();
       Alert.alert('Error when updating the issue');
     });
 
@@ -504,6 +513,10 @@ export default class IssueItemList extends Component {
 
     return (
       <View>
+        {
+          this.state.loading &&
+          <LoadingIndicator />
+        }
         <TouchableOpacity 
           style={styles.issuePanelHeaderView}
           onPress={()=>{
