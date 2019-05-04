@@ -298,7 +298,6 @@ export default class EmployeeScreen extends Component {
                 dispatch(NavigationActions.navigate({
                   routeName: 'ClosedIssueViewScreen',
                   params:{ 
-                    location:3,
                     refreshList:this.props.navigation.state.params.refreshList,
                   }
                 }))

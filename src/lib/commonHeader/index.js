@@ -110,6 +110,7 @@ export default class CommonHeder extends Component {
               onPress={()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'ClosedIssueViewScreen',
+                  params:{},
                 }))
               }}
             >

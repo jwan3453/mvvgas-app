@@ -552,7 +552,7 @@ export default class ClosedIssueViewScreen extends Component {
     if(type === 'backward') {
       if(this.state.offset > this.state.pageSize ) {
         this.setState({
-          offset: parseInt((this.state.offset / this.state.pageSize) -1) * this.state.pageSize
+          offset: (Math.ceil(this.state.offset  / this.state.pageSize) - 2 ) * this.state.pageSize
         },()=>this.search())
       }
     }  else {
@@ -566,6 +566,8 @@ export default class ClosedIssueViewScreen extends Component {
 
   render(){
     const {dispatch} = this.props.navigation;
+    const {refreshList } = this.props.navigation.state.params;
+
     return (
       <View style={styles.container}>
         {
@@ -575,7 +577,7 @@ export default class ClosedIssueViewScreen extends Component {
         <CommonHeader
           needLogout={true}
           needGoMainMenu={true}
-          refreshIssueList={()=>this.props.navigation.state.params.refreshList()}
+          refreshIssueList={()=>{refreshList !==undefined && refreshList()}}
           dispatch={dispatch}
         />
 

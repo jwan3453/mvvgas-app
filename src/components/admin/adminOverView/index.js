@@ -408,6 +408,9 @@ export default class AdminOverViewScreen extends Component {
               onPress={()=>{
                 dispatch(NavigationActions.navigate({
                   routeName: 'ClosedIssueViewScreen',
+                  params:{ 
+                    refreshList:this.refreshList,
+                  }   ,
                 }))
               }}
             />
