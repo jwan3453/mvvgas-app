@@ -254,6 +254,13 @@ export default class ClosedIssueViewScreen extends Component {
         offset:type === 'new'?0:this.state.offset,
         order:this.state.order,
       };
+
+      if(type === 'new') {
+        this.setState({
+          offset:0,
+        })
+      }
+
       Object.keys(params).forEach((key) => (params[key] == null) && delete params[key])
       var queryString = Object.keys(params).map(function(key) {
         if(params[key] !== null) {
