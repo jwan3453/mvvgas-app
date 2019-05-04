@@ -133,7 +133,6 @@ export default class Store1 extends Component {
       })
     }
 
-    console.warn(this.state.currentSelectIssue);
     return (
       <View style={styles.container}>
 

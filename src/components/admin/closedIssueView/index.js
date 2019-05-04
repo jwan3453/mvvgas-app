@@ -274,7 +274,6 @@ export default class ClosedIssueViewScreen extends Component {
       .then((data) => {
         this.setState({loading:false})
         if(data.status === 'ok') {
-          console.warn(data);
           this.setState({
             closedIssueList: data.rows,
             totalIssues:data.total,
@@ -400,7 +399,6 @@ export default class ClosedIssueViewScreen extends Component {
       order='desc';
       data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
     }
-    console.warn(order,sortColumn)
     this.setState({
       closedIssueList:data,
       currentColumn:sortColumn,
@@ -551,8 +549,6 @@ export default class ClosedIssueViewScreen extends Component {
   }
 
   movePage(type) {
-    console.warn(this.state.offset, );
-
     if(type === 'backward') {
       if(this.state.offset > this.state.pageSize ) {
         this.setState({
@@ -579,6 +575,7 @@ export default class ClosedIssueViewScreen extends Component {
         <CommonHeader
           needLogout={true}
           needGoMainMenu={true}
+          refreshIssueList={()=>this.props.navigation.state.params.refreshList()}
           dispatch={dispatch}
         />
 

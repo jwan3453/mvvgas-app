@@ -187,7 +187,6 @@ export default class EmployeeScreen extends Component {
   render() {
     const { location }  = this.props.navigation.state.params;
     const {dispatch} = this.props.navigation;
-    console.warn('dispatch', dispatch)
     return (
       <View style={styles.container}>
       <CommonHeader
@@ -264,69 +263,69 @@ export default class EmployeeScreen extends Component {
 
     
         {
-          <View style={styles.openIssuesListView}>
-          <View style={styles.openIssueListHeader}>
-            <Text style={styles.openIssueText}>
-              Open Issues
-            </Text>
-            <Button
-              style={styles.closedIssueBtn}
-              title="See Closed Issue"
-              titleStyle={styles.closedIssueBtnText}
-              onPress={this.login}
-            />
-          </View>
+        //   <View style={styles.openIssuesListView}>
+        //   <View style={styles.openIssueListHeader}>
+        //     <Text style={styles.openIssueText}>
+        //       Open Issues
+        //     </Text>
+        //     <Button
+        //       style={styles.closedIssueBtn}
+        //       title="See Closed Issue"
+        //       titleStyle={styles.closedIssueBtnText}
+        //       onPress={this.login}
+        //     />
+        //   </View>
 
 
-          <View style={styles.tableHeadView}>
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('created_at')}
-            >
-              <Text style={styles.headCellText}>Time Stamp</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('reported_issue')}
-            > 
-              <Text>Reported Issue</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:2}]}
-              onPress={() => this.onColumnSort('diagnoed_issues')}
-            >
-              <Text>Diagnosed Issues</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:3}]}
-              onPress={() => this.onColumnSort('description')}
-            >
-              <Text>Description</Text>
-            </TouchableOpacity>            
-            <TouchableOpacity 
-              style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('location')}
-            >
-              <Text>Location</Text>
-            </TouchableOpacity>            
-            <TouchableOpacity style={[styles.headCell,{flex:1}]}
-              style={[styles.headCell,{flex:1}]}
-              onPress={() => this.onColumnSort('feature')}
-            >
-              <Text>Feature</Text>
-            </TouchableOpacity>
-          </View>
+        //   <View style={styles.tableHeadView}>
+        //     <TouchableOpacity 
+        //       style={[styles.headCell,{flex:1}]}
+        //       onPress={() => this.onColumnSort('created_at')}
+        //     >
+        //       <Text style={styles.headCellText}>Time Stamp</Text>
+        //     </TouchableOpacity>
+        //     <TouchableOpacity 
+        //       style={[styles.headCell,{flex:1}]}
+        //       onPress={() => this.onColumnSort('reported_issue')}
+        //     > 
+        //       <Text>Reported Issue</Text>
+        //     </TouchableOpacity>
+        //     <TouchableOpacity 
+        //       style={[styles.headCell,{flex:2}]}
+        //       onPress={() => this.onColumnSort('diagnoed_issues')}
+        //     >
+        //       <Text>Diagnosed Issues</Text>
+        //     </TouchableOpacity>
+        //     <TouchableOpacity 
+        //       style={[styles.headCell,{flex:3}]}
+        //       onPress={() => this.onColumnSort('description')}
+        //     >
+        //       <Text>Description</Text>
+        //     </TouchableOpacity>            
+        //     <TouchableOpacity 
+        //       style={[styles.headCell,{flex:1}]}
+        //       onPress={() => this.onColumnSort('location')}
+        //     >
+        //       <Text>Location</Text>
+        //     </TouchableOpacity>            
+        //     <TouchableOpacity style={[styles.headCell,{flex:1}]}
+        //       style={[styles.headCell,{flex:1}]}
+        //       onPress={() => this.onColumnSort('feature')}
+        //     >
+        //       <Text>Feature</Text>
+        //     </TouchableOpacity>
+        //   </View>
 
 
-          <FlatList
-            legacyImplementation={true}
-            data={this.state.openIssues}
-            extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-            onEndReachedThreshold={0.1}
-          />
-        </View>
+        //   <FlatList
+        //     legacyImplementation={true}
+        //     data={this.state.openIssues}
+        //     extraData={this.state}
+        //     keyExtractor={this.keyExtractor}
+        //     renderItem={this.renderItem}
+        //     onEndReachedThreshold={0.1}
+        //   />
+        // </View>
         }
         <Toast
           ref="toast"

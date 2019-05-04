@@ -102,7 +102,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mvvgas"
+        applicationId "com.mvvpump"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 26 //rootProject.ext.targetSdkVersion
         versionCode 1
