@@ -1,1 +1,1 @@
-export const API_ROOT = 'http://marineviewventuresfuelstationapp-dev.767kij8p2n.us-west-2.elasticbeanstalk.com';
+export const API_ROOT = 'http://mvv-fsa-app-dev.us-west-2.elasticbeanstalk.com';
