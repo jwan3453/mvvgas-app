@@ -17,14 +17,14 @@ const styles = StyleSheet.create({
   },
   tableView: {
     marginTop:50,
-    width:600,
+    width:400,
   },
   smallTableView: {
     marginTop:25,
-    width:200,
+    width:180,
   },
   storeView: {
-    width:250,
+    width:450,
     height:250,
     alignContent:'center',
     justifyContent:'center',
@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
   },
 
   smallStoreView: {
-    width:120,
-    height:80,
+    width:200,
+    height:100,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,

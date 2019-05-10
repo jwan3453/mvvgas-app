@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     width:120,
   },
   storeView: {
-    width:250,
+    width:350,
     height:250,
     alignContent:'center',
     justifyContent:'center',
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     marginLeft: 200,
   },
   smallStoreView: {
-    width:120,
+    width:160,
     height:120,
     alignContent:'center',
     justifyContent:'center',

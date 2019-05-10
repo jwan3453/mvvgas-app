@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   tableView: {
     marginTop:50,
     flexDirection: 'row',
-    width:600,
+    width:392,
   },
   smallTableView: {
     marginTop:25,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
 
   storeView: {
-    width:250,
+    width:450,
     height:250,
     alignContent:'center',
     justifyContent:'center',
@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
   },
 
   smallStoreView: {
-    width:120,
-    height:80,
+    width:200,
+    height:100,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,
@@ -184,11 +184,11 @@ export default class Store5 extends Component {
           </TouchableOpacity>
 
           <Table style={size==='small'?styles.smallTableView:styles.tableView}>
-              <TableWrapper style={size==='small'? {width: 66}: {width: 200}} >
+              <TableWrapper style={size==='small'? {width: 66}: {width: 130}} >
                   <Cols data={this.state.tableData1} heightArr={size==='small'?[50,25,25]:[100,50,50]} />
               </TableWrapper>
 
-              <TableWrapper style={size==='small'? {width: 66}: {width: 200}} >
+              <TableWrapper style={size==='small'? {width: 66}: {width: 130}} >
                  <TableWrapper  borderStyle={{borderTopWidth:0, borderColor: 'transparent'}}>
                   <Cols data={this.state.tableData2} heightArr={size==='small'?[50]:[100]} />
                  </TableWrapper> 
@@ -198,7 +198,7 @@ export default class Store5 extends Component {
                
               </TableWrapper>
 
-            <TableWrapper style={size==='small'? {width: 66,borderLeftWidth:1}: {width: 200 ,borderLeftWidth:1}}>
+            <TableWrapper style={size==='small'? {width: 66,borderLeftWidth:1}: {width: 130 ,borderLeftWidth:1}}>
                 <Cols data={this.state.tableData4} heightArr={size==='small'?[50,25,25]:[100,50,50]} />
             </TableWrapper>
 

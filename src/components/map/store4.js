@@ -20,10 +20,10 @@ const styles = StyleSheet.create({
   },
   smallTableView: {
     marginTop:25,
-    width:200,
+    width:250,
   },
   storeView: {
-    width:250,
+    width:450,
     height:250,
     alignContent:'center',
     justifyContent:'center',
@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
   },
 
   smallStoreView: {
-    width:120,
-    height:80,
+    width:200,
+    height:100,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,

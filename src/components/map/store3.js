@@ -20,12 +20,12 @@ const styles = StyleSheet.create({
     marginTop:80,
   },
   smallTableView: {
-    width:180,
+    width:120,
     marginLeft: 30,
   },
   storeView: {
     marginTop:80,
-    width:250,
+    width:350,
     height:250,
     alignContent:'center',
     justifyContent:'center',
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
 
   smallStoreView: {
     marginTop:50,
-    width:120,
-    height:80,
+    width:160,
+    height:100,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
   },
   smallCarWashView: {
     marginTop:30,
-    width:60,
-    height:60,
+    width:80,
+    height:80,
     alignContent:'center',
     justifyContent:'center',
     borderWidth:1,
