@@ -108,7 +108,7 @@ export default class Store2 extends Component {
   }
 
   showIssueItemList(type,selectIssue,value) {
-    if( (selectIssue !== null && this.props.role == 'admin'  ) || ( this.props.role == 'employee'  && selectIssue === null) ){
+    //if( (selectIssue !== null && this.props.role == 'admin'  ) || ( this.props.role == 'employee'  && selectIssue === null) ){
       let feature = '';
       if(type === 'Pump') {
         feature = type + ' #'+value;
@@ -121,7 +121,7 @@ export default class Store2 extends Component {
         showIssueItem:true,
         feature,
       })
-    }
+   // }
   }
 
 

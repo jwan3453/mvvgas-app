@@ -151,6 +151,7 @@ export default class IssueItemList extends Component {
       issueDescription:'',
       continue:false,
       loading:false,
+      hasSelectOther:false,
     }
   }
 
@@ -186,6 +187,7 @@ export default class IssueItemList extends Component {
     });
   }
 
+  // select issue types
   selectItem(issueItem){
     if(this.props.role === 'employee') {
       this.setState({
@@ -193,17 +195,31 @@ export default class IssueItemList extends Component {
       })
     }else {
       let tmpObj = Object.assign([],this.state.selectedDiagnosedIssues);
+
+      if(issueItem.name.toLowerCase().includes('other')) {
+        this.setState({
+          hasSelectOther:true,
+        })
+      }
+
       if(this.state.selectedDiagnosedIssues && this.state.selectedDiagnosedIssues.includes(issueItem.id)) {
         tmpObj.splice(tmpObj.indexOf(issueItem.id), 1);
         this.setState({
           selectedDiagnosedIssues: tmpObj
         })
+
       } else if(this.state.selectedDiagnosedIssues && !this.state.selectedDiagnosedIssues.includes(issueItem.id)){
         tmpObj.push(issueItem.id);
         this.setState({
           selectedDiagnosedIssues: tmpObj
         })
+      } else {
+        tmpObj.push(issueItem.id);
+        this.setState({
+          selectedDiagnosedIssues: tmpObj
+        })
       }
+
     }
   }
 
@@ -213,7 +229,7 @@ export default class IssueItemList extends Component {
 
 
 
-  createNewIssue(token){
+  createNewIssue(token,role){
 
     this.setState({loading:true,})
     fetch(API_ROOT+ '/api/issues', {
@@ -224,7 +240,7 @@ export default class IssueItemList extends Component {
         'Authorization': 'Bearer '+ token.token
       },
       body:  JSON.stringify({
-        reportedIssue:this.state.selectedReportIssue.id,
+        reportedIssue: role === 'admin'?this.state.selectedDiagnosedIssues.join(','):this.state.selectedReportIssue.id,
         description:this.state.issueDescription,
         location:this.props.location,
         feature:this.props.feature
@@ -254,22 +270,35 @@ export default class IssueItemList extends Component {
     })
   }
 
-  submitNewIssue(){
+  submitNewIssue(role){
     if(this.state.selectedReportIssue === null) {
       Alert.alert('please select an issue.');
     } else {
       storage.load({
         key: 'apiToken',
       }).then(token => {
-        this.createNewIssue(token);
+        this.createNewIssue(token,role);
       }).catch((error) => {console.warn(error) });
     }
   }
 
+  submitNewIssueByAdmin(role){
+    if(this.state.selectedDiagnosedIssues===null) {
+      Alert.alert('please select an issue.');
+    } else {
+      storage.load({
+        key: 'apiToken',
+      }).then(token => {
+        this.createNewIssue(token,role);
+      }).catch((error) => {console.warn(error) });
+    }
+  }
+
+
+
   updateCurrentIssue(token, status){
 
     this.setState({loading:true,})
-    console.warn(this.props.currentIssue.id);
     fetch(API_ROOT+ '/api/issues/' + this.props.currentIssue.id, {
       method: 'put',
       headers: {
@@ -324,16 +353,18 @@ export default class IssueItemList extends Component {
     })
   }
 
+  
+
   renderPopupContent(){
-    const { role,type,currentIssue} = this.props;
-    let reported_issue = null;
+    const { role,type,currentIssue,feature} = this.props;
+    let reported_issue = '';
     let panelHeader = '';
     let issueItemListView = null;
     let issueItemList = [];
     let issuePanelDisplay = null;
     //display list for employee to report issie
     if(role === 'employee') {
-      panelHeader = 'Report Issue on '+ type;
+      panelHeader = 'Report Issue on '+ feature;
       if(this.state.issueItems) {
         //select report issue as 'Other'
         if(this.state.selectedReportIssue !== null && this.state.selectedReportIssue.name.toLowerCase() === 'other') {
@@ -391,7 +422,7 @@ export default class IssueItemList extends Component {
           }
           <TouchableOpacity 
             style={styles.submitIssueBtn}
-            onPress={()=>this.submitNewIssue()}
+            onPress={()=>this.submitNewIssue('employee')}
           >
             <Text style={styles.submitIssueBtnText}>Submit</Text>
           </TouchableOpacity>
@@ -399,14 +430,19 @@ export default class IssueItemList extends Component {
       )
     }
     //display list for admin to close the issie
-    else {
-      panelHeader = 'Issue on '+ type;
+    else if(role === 'admin' && currentIssue){
+      panelHeader = 'Issue on '+ feature;
+      console.warn(currentIssue);
       if(currentIssue && this.state.issueItems) {
+        let currentIssueIdArray = currentIssue.reported_issue.split(',').map(function(item) {
+          return parseInt(item, 10);
+        });
         this.state.issueItems.map((issueItem)=> {
-          if(issueItem.id == currentIssue.reported_issue) {
-            reported_issue = issueItem.name;
-            if(reported_issue.toLowerCase().includes('other')) {
-              reported_issue = 'Other, ' + currentIssue.description;
+          if(currentIssueIdArray.indexOf(issueItem.id) !== -1) {
+            if(issueItem.name.toLowerCase().includes('other')) {
+              reported_issue += 'Other: ' + currentIssue.description;
+            } else {
+              reported_issue += issueItem.name + ', ';
             }
           }
         })
@@ -429,6 +465,95 @@ export default class IssueItemList extends Component {
               </View>
               <View style={styles.issueDetialView}>
                 <Text style={styles.issueText}>Enter followup on issue:</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder=""
+                  placeholderTextColor="rgba(0, 0, 0, 0.2)"
+                  onChangeText={this.handleIssueDescriptionChange}
+                  underlineColorAndroid='transparent'
+                  value={this.state.issueDescription}
+                  autoCapitalize = 'none'
+                  numberOfLines={10}
+                  multiline={true}
+                />
+              </View>
+            </View>
+          );
+        } else {
+          this.state.issueItems.map((issueItem)=> {
+
+            if(issueItem.type.toLowerCase().includes(type.toLowerCase())) {
+              issueItemList.push(
+                <TouchableOpacity 
+                  style={
+                    [ styles.issueItemView, 
+                      this.state.selectedDiagnosedIssues && this.state.selectedDiagnosedIssues.includes(issueItem.id) && styles.selectedIssueItem 
+                    ]} 
+                  key={issueItem.id}
+                  onPress={()=>this.selectItem(issueItem)}
+                  >
+                  <Text style={styles.issueItemText}>
+                    {issueItem.name}
+                  </Text>
+                </TouchableOpacity>
+              )
+            }
+          })
+
+          issueItemListView = (
+            <ScrollView style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
+            {
+              issueItemList
+            }
+            </ScrollView>
+          )
+        }
+      }
+
+      issuePanelDisplay = (
+        <View>
+          {
+            issueItemListView
+          }
+          {
+            this.state.continue === false ?
+            <TouchableOpacity 
+              style={styles.submitIssueBtn}
+              onPress={()=>this.continueToCloseIssue()}
+            >
+              <Text style={styles.submitIssueBtnText}>Continue</Text>
+            </TouchableOpacity>:
+            <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
+              <TouchableOpacity 
+                style={[styles.updateIssueBtn,this.state.issueDescription ==='' && styles.disalbeUpdateIssueBtn] }
+                onPress={()=>this.updateIssue('on hold')}
+              >
+                <Text style={styles.updateIssueBtnText}>Put on hold</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.updateIssueBtn,this.state.issueDescription ==='' && styles.disalbeUpdateIssueBtn] }
+                onPress={()=>this.updateIssue('closed')}
+              >
+                <Text style={styles.updateIssueBtnText}>Close Issue</Text>
+              </TouchableOpacity>
+
+            </View>
+          }
+
+        </View>
+      )
+    } 
+       //display list for admin to create an issie
+    else if(role === 'admin' && !currentIssue){ 
+      panelHeader = 'Report Issue on '+ feature;
+      if(this.state.issueItems) {
+        if(this.state.continue === true) {
+          //render the contiune panel
+          issueItemListView = (
+            <View>
+              <View style={styles.issueDetialView}>
+                <Text style={styles.issueText}>Enter description for other:</Text>
                 <TextInput
                   style={styles.textInput}
                   placeholder=""
@@ -471,9 +596,6 @@ export default class IssueItemList extends Component {
             </ScrollView>
           )
         }
-      }
-
-
 
       issuePanelDisplay = (
         <View>
@@ -484,33 +606,27 @@ export default class IssueItemList extends Component {
             this.state.continue === false ?
             <TouchableOpacity 
               style={styles.submitIssueBtn}
-              onPress={()=>this.continueToCloseIssue()}
+              onPress={()=>{
+                this.state.hasSelectOther?this.continueToCloseIssue():this.submitNewIssueByAdmin('admin')
+              }}
             >
-              <Text style={styles.submitIssueBtnText}>Continue</Text>
+              <Text style={styles.submitIssueBtnText}>{this.state.hasSelectOther?'Continue':'Submit Issue'}</Text>
             </TouchableOpacity>:
             <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
               <TouchableOpacity 
                 style={[styles.updateIssueBtn,this.state.issueDescription ==='' && styles.disalbeUpdateIssueBtn] }
-                onPress={()=>this.updateIssue('on hold')}
+                onPress={()=>this.submitNewIssueByAdmin('admin')}
               >
-                <Text style={styles.updateIssueBtnText}>Put on hold</Text>
+                <Text style={styles.updateIssueBtnText}>Submit Issue</Text>
               </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.updateIssueBtn,this.state.issueDescription ==='' && styles.disalbeUpdateIssueBtn] }
-                onPress={()=>this.updateIssue('closed')}
-              >
-                <Text style={styles.updateIssueBtnText}>Close Issue</Text>
-              </TouchableOpacity>
-
             </View>
           }
 
         </View>
       )
+
+      }      
     }
-
-
     return (
       <View>
         {
@@ -524,6 +640,7 @@ export default class IssueItemList extends Component {
               selectedReportIssue:null,
               selectedDiagnosedIssues:null,
               continue:false,
+              hasSelectOther:false,
             })
             this.props.closeIssuePanel();
           }}
@@ -537,13 +654,11 @@ export default class IssueItemList extends Component {
           />
         </TouchableOpacity>
         { 
-          reported_issue && 
+          reported_issue !== '' && 
           <View style={styles.issueTextView}>
             <Text style={styles.issueText}> Reported issue: { reported_issue  }</Text>
           </View>
         }
-
-        
         {
           issuePanelDisplay
         }
@@ -551,11 +666,18 @@ export default class IssueItemList extends Component {
     )
   }
 
-  componentWillReceiveProps(nextPrpos) {
+  componentWillReceiveProps(nextProps) {
     const {  currentIssue } = this.props;
-    if(currentIssue !== nextPrpos.currentIssue) {
+    if(nextProps.currentIssue !== null && currentIssue !== nextProps.currentIssue ) {
       this.setState({
-        selectedDiagnosedIssues: [parseInt(nextPrpos.currentIssue.reported_issue)],
+        selectedDiagnosedIssues: nextProps.currentIssue.reported_issue.split(',').map(function(item) {
+          return parseInt(item, 10);
+        }),
+      })
+    }
+    if(nextProps.currentIssue === null) {
+      this.setState({
+        selectedDiagnosedIssues: null,
       })
     }
   }
@@ -564,7 +686,9 @@ export default class IssueItemList extends Component {
     const { currentIssue } = this.props;
     if(currentIssue !== null && this.state.selectedDiagnosedIssues === null ){
       this.setState({
-        selectedDiagnosedIssues: [parseInt(currentIssue.reported_issue)],
+        selectedDiagnosedIssues: currentIssue.reported_issue.split(',').map(function(item) {
+          return parseInt(item, 10);
+        }),
       })
     }
 

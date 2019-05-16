@@ -308,6 +308,7 @@ export default class ClosedIssueViewScreen extends Component {
           } else {
             tmpList[item.id] = item.name
           }
+          //tmpList[item.id] = item.name;
         })
         tmpList[0]='All reported issues';
         data = tmpList;
@@ -319,6 +320,7 @@ export default class ClosedIssueViewScreen extends Component {
           } else {
             tmpList[item.id] = item.name
           }
+          //tmpList[item.id] = item.name;
         })
         tmpList[0]='All diagnosed issues';
         data = tmpList;
