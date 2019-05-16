@@ -21,6 +21,7 @@ import Toast from 'react-native-easy-toast';
 import LoadingIndicator from '../../../lib/loadingIndicator';
 import CommonHeader from '../../../lib/commonHeader'
 import { NavigationActions } from 'react-navigation';
+import moment from 'moment';
 
 
 const styles = StyleSheet.create({
@@ -162,14 +163,14 @@ export default class EmployeeScreen extends Component {
     if(sortColumn === this.state.currentColumn) {
       if(order === 'asc') {
         order='desc';
-        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
       } else {
         order='asc';
-        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  > moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
       }
     } else {
       order='desc';
-      data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+      data = data.sort((a, b) => ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix())? 1 : -1)
     }
     this.setState({
       openIssues:data,

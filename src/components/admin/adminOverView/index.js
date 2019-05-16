@@ -14,6 +14,7 @@ import storage from '../../../storage';
 import { API_ROOT } from '../../../constans/setting';
 import Toast from 'react-native-easy-toast';
 import LoadingIndicator from '../../../lib/loadingIndicator';
+import moment from 'moment';
 
 const styles = StyleSheet.create({
   container: { 
@@ -199,14 +200,15 @@ export default class AdminOverViewScreen extends Component {
     if(sortColumn === this.state.currentColumn) {
       if(order === 'asc') {
         order='desc';
-        data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) =>  ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
       } else {
         order='asc';
-        data = data.sort((a, b) => (a[sortColumn] > b[sortColumn]) ? 1 : -1)
+        data = data.sort((a, b) => ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix() >  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
       }
     } else {
+      console.warn('asdasdas');
       order='desc';
-      data = data.sort((a, b) => (a[sortColumn] < b[sortColumn]) ? 1 : -1)
+      data = data.sort((a, b) => ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix() <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
     }
     this.setState({
       allOpenIssuesNoSort:data,
