@@ -537,8 +537,9 @@ export default class ClosedIssueViewScreen extends Component {
                 i ===(loopNum-1)?styles.lastPageBtn:null,
               ]}
               onPress={()=>{
+                console.warn(i * this.state.pageSize);
                 this.setState({
-                  offset:(i * this.state.pageSize)
+                  offset:((pageNo-1) * this.state.pageSize)
                 },()=>this.search())
                 }}    
             >
