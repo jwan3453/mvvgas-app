@@ -208,6 +208,12 @@ export default class IssueItemList extends Component {
           selectedDiagnosedIssues: tmpObj
         })
 
+        if(issueItem.name.toLowerCase().includes('other')) {
+          this.setState({
+            hasSelectOther:false,
+          })
+        }
+
       } else if(this.state.selectedDiagnosedIssues && !this.state.selectedDiagnosedIssues.includes(issueItem.id)){
         tmpObj.push(issueItem.id);
         this.setState({
