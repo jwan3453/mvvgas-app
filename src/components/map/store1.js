@@ -101,7 +101,7 @@ export default class Store1 extends Component {
   }
 
   showIssueItemList(type,selectIssue,value) {
-    if(!this.props.noClick){
+    if(!this.props.noClick && !( this.props.role === 'employee' && selectIssue !== null) ){
       let feature = '';
       if(type === 'Pump') {
         feature = type + ' #'+value;
