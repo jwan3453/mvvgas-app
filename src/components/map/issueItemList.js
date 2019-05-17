@@ -368,6 +368,7 @@ export default class IssueItemList extends Component {
     let issueItemListView = null;
     let issueItemList = [];
     let issuePanelDisplay = null;
+    let reg=/,$/gi;
     //display list for employee to report issie
     if(role === 'employee') {
       panelHeader = 'Report Issue on '+ feature;
@@ -438,7 +439,6 @@ export default class IssueItemList extends Component {
     //display list for admin to close the issie
     else if(role === 'admin' && currentIssue){
       panelHeader = 'Issue on '+ feature;
-      console.warn(currentIssue);
       if(currentIssue && this.state.issueItems) {
         let currentIssueIdArray = currentIssue.reported_issue.split(',').map(function(item) {
           return parseInt(item, 10);
@@ -446,12 +446,13 @@ export default class IssueItemList extends Component {
         this.state.issueItems.map((issueItem)=> {
           if(currentIssueIdArray.indexOf(issueItem.id) !== -1) {
             if(issueItem.name.toLowerCase().includes('other')) {
-              reported_issue += 'Other: ' + currentIssue.description;
+              reported_issue += 'Other: ' + currentIssue.other_description + ', ';
             } else {
               reported_issue += issueItem.name + ', ';
             }
           }
         })
+        reported_issue = reported_issue.trim().replace(reg,"");
       }
 
       if(this.state.issueItems) {
@@ -464,6 +465,7 @@ export default class IssueItemList extends Component {
             }
           })
 
+          diagnosedIssueText = diagnosedIssueText.trim().replace(reg,"");
           issueItemListView = (
             <View>
               <View style={styles.issueTextView}>
