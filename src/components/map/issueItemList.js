@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 
   popupStyle: {
-    width: 450,
+    width: 660,
     height: 'auto',
     backgroundColor:'white',
   },
@@ -43,12 +43,13 @@ const styles = StyleSheet.create({
   },
 
   issueItemScrollList: {
-    height: 420,
-
+    // height: 420,
+    flexDirection:'row',
+    flexWrap:'wrap',
   },
   issueItemView: {
     height: 50,
-    width: '90%',
+    width: 300,
     paddingLeft:20,
     paddingRight:20,
     justifyContent:'center',
@@ -56,8 +57,10 @@ const styles = StyleSheet.create({
     borderWidth:1,
     borderColor:'black',
     marginTop:10,
+    marginLeft:20,
     marginBottom:10,
     borderRadius: 5,
+
   },
   selectedIssueItem: {
     backgroundColor:'#C6C6C6',
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     borderWidth:2,
   },
   issueItemText: {
-    fontSize:20,
+    fontSize:18,
   },
   issueDetialView: {
     marginTop:10,
@@ -413,11 +416,11 @@ export default class IssueItemList extends Component {
           })
 
           issueItemListView = (
-            <ScrollView style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
+            <View style={styles.issueItemScrollList} >
             {
               issueItemList
             }
-            </ScrollView>
+            </View>
           )
         }
       }
@@ -509,11 +512,11 @@ export default class IssueItemList extends Component {
           })
 
           issueItemListView = (
-            <ScrollView style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
+            <View style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
             {
               issueItemList
             }
-            </ScrollView>
+            </View>
           )
         }
       }
@@ -597,11 +600,11 @@ export default class IssueItemList extends Component {
           })
 
           issueItemListView = (
-            <ScrollView style={styles.issueItemScrollList} contentContainerStyle={{alignItems:'center'}}>
+            <View style={styles.issueItemScrollList} >
             {
               issueItemList
             }
-            </ScrollView>
+            </View>
           )
         }
 
