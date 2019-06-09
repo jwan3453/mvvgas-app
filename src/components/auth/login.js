@@ -74,7 +74,10 @@ class LoginScreen extends Component {
   componentDidMount(){
     const { navigation } = this.props;
     const { dispatch } = navigation;
-    this.setState({loading:true});
+    this.setState({
+      loading:true,
+      pin:''
+    });
     storage.load({
       key:'apiToken'
     }).then((token)=>{
@@ -125,6 +128,10 @@ class LoginScreen extends Component {
         }).then((data)=>{
         
         });
+
+        this.setState({
+          pin:'',
+        })
 
         if( data.response.role === 1) {
           dispatch(NavigationActions.navigate({
