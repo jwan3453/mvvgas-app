@@ -63,7 +63,8 @@ export default class Store5 extends Component {
     super(props);
   }
   elementButton (value, props)  {
-    let issued  = false;
+    let isReported  = false;
+    let isOnHold = false;
     let feature = 'pump';
     let selectIssue = null;
     if(props !== undefined) {
@@ -74,13 +75,22 @@ export default class Store5 extends Component {
             let pumpNo = issue.feature.match(/Pump #(.*)/)[1];
             if(value == pumpNo) {
               selectIssue = issue;
-              issued = true;
+              if(issue.status === 'reported') {
+                isReported = true
+              } else {
+                isOnHold = true
+              }
             }
           }
         })
       }
     }
-    return (<TouchableOpacity onPress={() => this.showIssueItemList('Pump', selectIssue, value)} style={[{flex:1}, issued &&{backgroundColor:'red'} ]}>
+    
+    return (
+    <TouchableOpacity 
+      onPress={
+        () => this.showIssueItemList('Pump', selectIssue, value)} 
+        style={[{flex:1}, isReported &&{backgroundColor:'red'},isOnHold && {backgroundColor:'#F58F09'}  ]}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>{value}</Text>
       </View>
@@ -162,13 +172,27 @@ export default class Store5 extends Component {
     const {size,openIssues} = this.props;
     let carwashIssue = null;
     let storeIssue = null;
+    let carwashReported = false;
+    let carwashOnHold = false;
+    let storeReported = false;
+    let storeOnHold = false;
     if(openIssues) {
       openIssues.map((issue)=>{
         if(issue.feature.toLowerCase().includes('car wash')) {
           carwashIssue = issue;
+          if(carwashIssue.status === 'reported') {
+            carwashReported = true
+          } else {
+            carwashOnHold = true
+          }
         } 
         if(issue.feature.toLowerCase().includes('store')) {
           storeIssue = issue;
+          if(storeIssue.status === 'reported') {
+            storeReported = true
+          } else {
+            storeOnHold = true
+          }
         } 
  
       })
@@ -176,8 +200,8 @@ export default class Store5 extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.mapAreaView}>
-          <TouchableOpacity 
-            style={[size==='small'?styles.smallStoreView:styles.storeView,storeIssue && {backgroundColor:'red'}]}
+        <TouchableOpacity 
+            style={[size==='small'?styles.smallStoreView:styles.storeView, storeReported && {backgroundColor:'red'}, storeOnHold&&{backgroundColor:'#F58F09'}]}
             onPress={()=>this.showIssueItemList('Store',storeIssue)}
           >
             <Text style={{textAlign:'center'}}>Store</Text>
