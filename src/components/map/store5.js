@@ -102,6 +102,7 @@ export default class Store5 extends Component {
     selectFeatureType:'',
     showIssueItem:false,
     feature:'',
+    isOnHold:false,
     tableData1:[
       [this.elementButton('10'), this.elementButton('8'),this.elementButton('8D')],
       [this.elementButton('9'), this.elementButton('7'),this.elementButton('7D')],
@@ -165,6 +166,18 @@ export default class Store5 extends Component {
         showIssueItem:true,
         feature,
       })
+    }
+
+    if( selectIssue !== null) {
+      if(selectIssue.status.includes('hold') && selectIssue.on_hold_reason !== '') {
+        this.setState({
+          isOnHold:true
+        })
+      } else {
+        this.setState({
+          isOnHold:false
+        })
+      }
     }
   }
 
@@ -240,6 +253,8 @@ export default class Store5 extends Component {
           closeIssuePanel={()=>{this.setState({
             showIssueItem:false,
           })}}
+          isOnHold={this.state.isOnHold}
+          edit={()=>{this.setState({isOnHold:false})}}
         />
       </View>
     )

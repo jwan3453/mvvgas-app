@@ -3,7 +3,6 @@ import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Table, TableWrapper,Col, Cols, Cell } from 'react-native-table-component';
 import IssueItemList from './issueItemList';
 
-
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
@@ -88,6 +87,7 @@ export default class Store1 extends Component {
     selectFeatureType:'',
     showIssueItem:false,
     feature:'',
+    isOnHold:false,
     tableData: [
       [this.elementButton('12'), this.elementButton('11'), this.elementButton('10'), this.elementButton('9'), this.elementButton('8'),this.elementButton('7')],
       [this.elementButton('6'), this.elementButton('5'), this.elementButton('4'), this.elementButton('3'), this.elementButton('2'),this.elementButton('1')],
@@ -119,6 +119,18 @@ export default class Store1 extends Component {
         showIssueItem:true,
         feature,
       })
+    }
+
+    if( selectIssue !== null) {
+      if(selectIssue.status.includes('hold') && selectIssue.on_hold_reason !== '') {
+        this.setState({
+          isOnHold:true
+        })
+      } else {
+        this.setState({
+          isOnHold:false
+        })
+      }
     }
   }
 
@@ -181,6 +193,8 @@ export default class Store1 extends Component {
           closeIssuePanel={()=>{this.setState({
             showIssueItem:false,
           })}}
+          isOnHold={this.state.isOnHold}
+          edit={()=>{this.setState({isOnHold:false})}}
         />
       </View>
     )

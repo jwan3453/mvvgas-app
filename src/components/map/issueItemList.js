@@ -60,13 +60,35 @@ const styles = StyleSheet.create({
     marginLeft:20,
     marginBottom:10,
     borderRadius: 5,
-
   },
+
   selectedIssueItem: {
     backgroundColor:'#C6C6C6',
     borderColor:'#797979',
     borderWidth:2,
   },
+
+  onHoldOptionItemView: {
+    height: 50,
+    width: 620,
+    paddingLeft:20,
+    paddingRight:20,
+    justifyContent:'center',
+    alignItems:'center',
+    borderWidth:1,
+    borderColor:'black',
+    marginTop:10,
+    marginLeft:20,
+    marginBottom:10,
+    borderRadius: 5,
+  },
+
+  selectedOptionItem: {
+    backgroundColor:'#C6C6C6',
+    borderColor:'#797979',
+    borderWidth:2,
+  },
+
   issueItemText: {
     fontSize:18,
   },
@@ -155,12 +177,16 @@ export default class IssueItemList extends Component {
       continue:false,
       loading:false,
       hasSelectOther:false,
+
+      isPutOnHold:false,
+      holdOptions: null,
+      selectHoldOption:null,
+      onHoldReason:'',
     }
   }
 
 
   componentDidMount(){
-
     storage.load({
       key: 'apiToken',
     }).then(token => {
@@ -180,10 +206,10 @@ export default class IssueItemList extends Component {
     .then((data) => {
       if(data.status === 'ok') {
         this.setState({
-          issueItems:data.issueItems
+          issueItems:data.issueItems,
+          holdOptions:data.holdOptions
         })
       }
-
     })
     .catch((error) => {
       this.props.showToast('Something went wrong, contact admin')
@@ -232,11 +258,19 @@ export default class IssueItemList extends Component {
     }
   }
 
+  selectHoldOptionItem(option) {
+    this.setState({
+      selectHoldOption:option
+    })
+  }
+
   handleIssueDescriptionChange = (issueDescription) => {
     this.setState({ issueDescription});
   }
 
-
+  handleOnHoldReasonChange = (onHoldReason) => {
+        this.setState({ onHoldReason});
+  }
 
   createNewIssue(token,role){
 
@@ -259,6 +293,9 @@ export default class IssueItemList extends Component {
       if(data.status === 'ok') {
         Alert.alert('Issue created');
         this.props.fetchOpenIssues(token);
+        this.setState({
+          issueDescription:''
+        })
       } else {
         Alert.alert('Unable to crate an issue');
       }
@@ -306,6 +343,27 @@ export default class IssueItemList extends Component {
 
 
   updateCurrentIssue(token, status){
+    let bodyString = ''
+    if(status !== 'on hold') {
+      bodyString = JSON.stringify({
+        diagnosedIssue:this.state.selectedDiagnosedIssues.join(','),
+        description:this.state.issueDescription === ''?this.props.currentIssue.description:this.state.issueDescription,
+        status,
+      })
+    } else {
+      let onHoldReason = ''
+      if(this.state.selectHoldOption.name !== 'Other') {
+        onHoldReason = this.state.selectHoldOption.name
+      } else {
+        onHoldReason = this.state.onHoldReason
+      }
+      bodyString = JSON.stringify({
+        diagnosedIssue:this.state.selectedDiagnosedIssues.join(','),
+        description:this.state.issueDescription,
+        status,
+        onHoldReason,
+      })
+    }
 
     this.setState({loading:true,})
     fetch(API_ROOT+ '/api/issues/' + this.props.currentIssue.id, {
@@ -315,16 +373,18 @@ export default class IssueItemList extends Component {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer '+ token.token
       },
-      body: JSON.stringify({
-        diagnosedIssue:this.state.selectedDiagnosedIssues.join(','),
-        description:this.state.issueDescription,
-        status,
-      }), 
+      body: bodyString, 
     }).then((response) => {return response.json()})
     .then((data) => {
       if(data.status === 'ok') {
         Alert.alert('Issue updated');
         this.props.fetchOpenIssues(token);
+        this.setState({
+          issueDescription:'',
+          isPutOnHold:false,
+          selectHoldOption:null,
+          onHoldReason:'',
+        })
       } else {
         Alert.alert('Unable to update the issue');
       }
@@ -345,16 +405,30 @@ export default class IssueItemList extends Component {
   }
 
 
+  submitOnHoldIssue() {
+    storage.load({
+      key: 'apiToken',
+    }).then(token => {
+      this.updateCurrentIssue(token,'on hold');
+    }).catch((error) => {console.warn(error) });
+  }
 
   updateIssue(status){
-    if(this.state.issueDescription !== '') {
-      storage.load({
-        key: 'apiToken',
-      }).then(token => {
-        this.updateCurrentIssue(token,status);
-      }).catch((error) => {console.warn(error) });
+    if(this.state.issueDescription !== '' || this.props.isOnHold === true) {
+      if(status !== 'closed') {
+        this.setState({
+          isPutOnHold:true
+        })
+      } else {
+        storage.load({
+          key: 'apiToken',
+        }).then(token => {
+          this.updateCurrentIssue(token,status);
+        }).catch((error) => {console.warn(error) });
+      }
     }
   }
+
 
   continueToCloseIssue(){
     this.setState({
@@ -372,6 +446,13 @@ export default class IssueItemList extends Component {
     let issueItemList = [];
     let issuePanelDisplay = null;
     let reg=/,$/gi;
+
+    // if(this.props.isOnHold) {
+    //   this.setState({
+    //     continue:true
+    //   })
+    // }
+
     //display list for employee to report issie
     if(role === 'employee') {
       panelHeader = 'Report Issue on '+ feature;
@@ -459,7 +540,7 @@ export default class IssueItemList extends Component {
       }
 
       if(this.state.issueItems) {
-        if(this.state.continue === true) {
+        if(this.state.continue === true || this.props.isOnHold) {
           //render the contiune panel
           let diagnosedIssueText = '';
           this.state.issueItems.map((issueItem)=>{
@@ -469,27 +550,104 @@ export default class IssueItemList extends Component {
           })
 
           diagnosedIssueText = diagnosedIssueText.trim().replace(reg,"");
-          issueItemListView = (
-            <View>
-              <View style={styles.issueTextView}>
-                <Text style={styles.issueText}> Diagnosed Issue(s): { diagnosedIssueText  }</Text>
+          if(this.state.isPutOnHold === false && this.props.isOnHold === false) {
+            issueItemListView = (
+              <View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Diagnosed Issue(s): { diagnosedIssueText  }</Text>
+                </View>
+                <View style={styles.issueDetialView}>
+                  <Text style={styles.issueText}>Enter followup on issue:</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder=""
+                    placeholderTextColor="rgba(0, 0, 0, 0.2)"
+                    onChangeText={this.handleIssueDescriptionChange}
+                    underlineColorAndroid='transparent'
+                    value={this.state.issueDescription}
+                    autoCapitalize = 'none'
+                    numberOfLines={10}
+                    multiline={true}
+                  />
+                </View>
               </View>
-              <View style={styles.issueDetialView}>
-                <Text style={styles.issueText}>Enter followup on issue:</Text>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder=""
-                  placeholderTextColor="rgba(0, 0, 0, 0.2)"
-                  onChangeText={this.handleIssueDescriptionChange}
-                  underlineColorAndroid='transparent'
-                  value={this.state.issueDescription}
-                  autoCapitalize = 'none'
-                  numberOfLines={10}
-                  multiline={true}
-                />
+            );
+          } else if(this.state.isPutOnHold === true) {
+            
+            let onHoldOptionList = []
+            this.state.holdOptions.map((option)=>{
+              onHoldOptionList.push(
+                <TouchableOpacity onPress={()=>this.selectHoldOptionItem(option)}
+                                  style={[styles.onHoldOptionItemView, this.state.selectHoldOption && this.state.selectHoldOption.name === option.name && styles.selectedOptionItem]}
+                >
+                  <Text style={styles.issueItemText}>
+                    {option.name}
+                  </Text>
+                </TouchableOpacity>  
+              )
+            })
+            issueItemListView = (
+              <View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Diagnosed Issue(s): { diagnosedIssueText  }</Text>
+                </View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Description: { this.state.issueDescription  }</Text>
+                </View>
+                {
+                  onHoldOptionList
+                }
+                {
+                  this.state.selectHoldOption && this.state.selectHoldOption.name === 'Other' &&
+                  <View style={styles.issueDetialView}>
+                    <Text style={styles.issueText}>Reason for hold:</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder=""
+                      placeholderTextColor="rgba(0, 0, 0, 0.2)"
+                      onChangeText={this.handleOnHoldReasonChange}
+                      underlineColorAndroid='transparent'
+                      value={this.state.onHoldReason}
+                      autoCapitalize = 'none'
+                      numberOfLines={10}
+                      multiline={true}
+                    />
+                  </View>
+                }
               </View>
-            </View>
-          );
+            )
+          } else if(this.props.isOnHold) {
+            issueItemListView = (
+              <View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Diagnosed Issue(s): { diagnosedIssueText  }</Text>
+                </View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Description: { currentIssue.description  }</Text>
+                </View>
+                <View style={styles.issueTextView}>
+                  <Text style={styles.issueText}> Hold: { currentIssue.on_hold_reason  }</Text>
+                </View>   
+
+                <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
+                  <TouchableOpacity 
+                    style={styles.updateIssueBtn}
+                    onPress={()=>this.props.edit()}
+                  >
+                    <Text style={styles.updateIssueBtnText}>Edit Issue</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={styles.updateIssueBtn }
+                    onPress={()=>this.updateIssue('closed')}
+                  >
+                    <Text style={styles.updateIssueBtnText}>Close Issue</Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+            )     
+          }
         } else {
           this.state.issueItems.map((issueItem)=> {
 
@@ -527,13 +685,16 @@ export default class IssueItemList extends Component {
             issueItemListView
           }
           {
-            this.state.continue === false ?
+            this.state.continue === false && !this.props.isOnHold &&
             <TouchableOpacity 
               style={styles.submitIssueBtn}
               onPress={()=>this.continueToCloseIssue()}
             >
               <Text style={styles.submitIssueBtnText}>Continue</Text>
-            </TouchableOpacity>:
+            </TouchableOpacity>
+          }
+          {
+            this.state.continue === true && this.state.isPutOnHold === false &&
             <View style={{flexDirection:'row',justifyContent:'space-evenly'}}>
               <TouchableOpacity 
                 style={[styles.updateIssueBtn,this.state.issueDescription ==='' && styles.disalbeUpdateIssueBtn] }
@@ -548,8 +709,16 @@ export default class IssueItemList extends Component {
               >
                 <Text style={styles.updateIssueBtnText}>Close Issue</Text>
               </TouchableOpacity>
-
             </View>
+          }
+          {
+              this.state.continue === true && this.state.isPutOnHold === true &&
+              <TouchableOpacity 
+                style={styles.submitIssueBtn}
+                onPress={()=>this.submitOnHoldIssue()}
+              >
+                <Text style={styles.submitIssueBtnText}>Submit</Text>
+              </TouchableOpacity>   
           }
 
         </View>

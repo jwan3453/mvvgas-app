@@ -91,6 +91,7 @@ export default class Store2 extends Component {
     selectFeatureType:'',
     showIssueItem:false,
     feature:'',
+    isOnHold:false,
     tableData: [
       [this.elementButton('1'), this.elementButton('3')],
       [this.elementButton('2'), this.elementButton('4')],
@@ -98,7 +99,8 @@ export default class Store2 extends Component {
       [this.elementButton('6'), this.elementButton('8')],
       [this.elementButton('9'), this.elementButton('11')],
       [this.elementButton('10'),this.elementButton('12')],
-    ]
+    ],
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -130,6 +132,18 @@ export default class Store2 extends Component {
         showIssueItem:true,
         feature,
       })
+    }
+
+    if( selectIssue !== null) {
+      if(selectIssue.status.includes('hold') && selectIssue.on_hold_reason !== '') {
+        this.setState({
+          isOnHold:true
+        })
+      } else {
+        this.setState({
+          isOnHold:false
+        })
+      }
     }
   }
 
@@ -192,6 +206,8 @@ export default class Store2 extends Component {
           closeIssuePanel={()=>{this.setState({
             showIssueItem:false,
           })}}
+          isOnHold={this.state.isOnHold}
+          edit={()=>{this.setState({isOnHold:false})}}
         />
       </View>
     )
