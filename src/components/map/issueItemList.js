@@ -463,6 +463,7 @@ export default class IssueItemList extends Component {
             <View style={styles.issueDetialView}>
               <Text style={styles.issueDetailLabel}>Enter Issue</Text>
               <TextInput
+                ref={input => { this.issueDescriptionInput = input }} 
                 style={styles.textInput}
                 placeholder="please enter issue description"
                 placeholderTextColor="rgba(0, 0, 0, 0.2)"
@@ -559,6 +560,7 @@ export default class IssueItemList extends Component {
                 <View style={styles.issueDetialView}>
                   <Text style={styles.issueText}>Enter followup on issue:</Text>
                   <TextInput
+                    ref={input => { this.issueDescriptionInput = input }} 
                     style={styles.textInput}
                     placeholder=""
                     placeholderTextColor="rgba(0, 0, 0, 0.2)"
@@ -602,6 +604,7 @@ export default class IssueItemList extends Component {
                   <View style={styles.issueDetialView}>
                     <Text style={styles.issueText}>Reason for hold:</Text>
                     <TextInput
+                      ref={input => { this.onHoldReasonInput = input }} 
                       style={styles.textInput}
                       placeholder=""
                       placeholderTextColor="rgba(0, 0, 0, 0.2)"
@@ -735,6 +738,7 @@ export default class IssueItemList extends Component {
               <View style={styles.issueDetialView}>
                 <Text style={styles.issueText}>Enter description for other:</Text>
                 <TextInput
+                  ref={input => { this.issueDescriptionInput = input }} 
                   style={styles.textInput}
                   placeholder=""
                   placeholderTextColor="rgba(0, 0, 0, 0.2)"
@@ -821,8 +825,14 @@ export default class IssueItemList extends Component {
               selectedDiagnosedIssues:null,
               continue:false,
               hasSelectOther:false,
+
+              isPutOnHold:false,
+              selectHoldOption:null,
+              onHoldReason:'',
+              issueDescription:'',
             })
             this.props.closeIssuePanel();
+          
           }}
         >
           <Text style={styles.panelHeaderText}>
