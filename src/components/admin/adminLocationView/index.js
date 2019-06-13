@@ -230,7 +230,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
-
+          dispatch = {dispatch}
         />
       }
       {
@@ -241,6 +241,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+          dispatch = {dispatch}
         />
       }
       {
@@ -251,6 +252,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+          dispatch = {dispatch}
         />
       }
       {
@@ -261,6 +263,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+          dispatch = {dispatch}
         />
       }
       {
@@ -271,6 +274,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+          dispatch = {dispatch}
         />
       }
       {
@@ -281,6 +285,7 @@ export default class EmployeeScreen extends Component {
           openIssues={this.state.openIssues}
           showToast={(msg) =>this.refs.toast.show(msg)}
           fetchOpenIssues={(token)=>this.fetchOpenIssues(token)}
+          dispatch = {dispatch}
         />
       }                              
 

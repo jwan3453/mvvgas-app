@@ -284,6 +284,8 @@ export default class AdminOverViewScreen extends Component {
                 size={'small'}
                 openIssues={this.state.allOpenIssues && this.state.allOpenIssues[1]?this.state.allOpenIssues[1]:null}
                 noClick={true}
+                refreshList = {this.refreshList}
+                dispatch={dispatch}
               />
               <Text style={styles.issueCountText}>
                 Current Issues: { this.state.issueCount[1]?this.state.issueCount[1]:0}
@@ -306,6 +308,8 @@ export default class AdminOverViewScreen extends Component {
                 size={'small'}
                 openIssues={this.state.allOpenIssues && this.state.allOpenIssues[2]?this.state.allOpenIssues[2]:null}
                 noClick={true}
+                refreshList = {this.refreshList}
+                dispatch={dispatch}
               />
               <Text style={styles.issueCountText}>
                 Current Issues: { this.state.issueCount[2]?this.state.issueCount[2]:0}
@@ -328,6 +332,8 @@ export default class AdminOverViewScreen extends Component {
                 size={'small'}
                 openIssues={this.state.allOpenIssues && this.state.allOpenIssues[3]?this.state.allOpenIssues[3]:null}
                 noClick={true}
+                refreshList = {this.refreshList}
+                dispatch={dispatch}
               />
               <Text style={styles.issueCountText}>
                 Current Issues: { this.state.issueCount[3]?this.state.issueCount[3]:0}
@@ -352,6 +358,8 @@ export default class AdminOverViewScreen extends Component {
               size={'small'}
               openIssues={this.state.allOpenIssues && this.state.allOpenIssues[4]?this.state.allOpenIssues[4]:null}
               noClick={true}
+              refreshList = {this.refreshList}
+              dispatch={dispatch}
             />
             <Text style={styles.issueCountText}>
               Current Issues: { this.state.issueCount[4]?this.state.issueCount[4]:0}
@@ -374,6 +382,8 @@ export default class AdminOverViewScreen extends Component {
                 size={'small'}
                 openIssues={this.state.allOpenIssues && this.state.allOpenIssues[5]?this.state.allOpenIssues[5]:null}
                 noClick={true}
+                refreshList = {this.refreshList}
+                dispatch={dispatch}
                 />
               <Text style={styles.issueCountText}>
                 Current Issues: { this.state.issueCount[5]?this.state.issueCount[5]:0}
@@ -396,6 +406,8 @@ export default class AdminOverViewScreen extends Component {
                 size={'small'}
                 openIssues={this.state.allOpenIssues && this.state.allOpenIssues[10]?this.state.allOpenIssues[10]:null}
                 noClick={true}
+                refreshList = {this.refreshList}
+                dispatch={dispatch}
               />
               <Text style={styles.issueCountText}>
                 Current Issues: { this.state.issueCount[10]?this.state.issueCount[10]:0}

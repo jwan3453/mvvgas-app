@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Table, TableWrapper,Col, Cols, Cell } from 'react-native-table-component';
 import IssueItemList from './issueItemList';
+import { NavigationActions } from 'react-navigation';
 
 const styles = StyleSheet.create({
   container: { 
@@ -119,6 +120,14 @@ export default class Store1 extends Component {
         showIssueItem:true,
         feature,
       })
+    } else {
+        this.props.dispatch(NavigationActions.navigate({
+        routeName: 'AdminLocationViewScreen',
+        params:{ 
+                location:1,
+                refreshList:this.props.refreshList,
+              }   ,
+      }))
     }
 
     if( selectIssue !== null) {
