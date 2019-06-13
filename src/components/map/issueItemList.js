@@ -4,6 +4,7 @@ import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import storage from '../../storage';
 import { API_ROOT } from '../../constans/setting';
 import LoadingIndicator from '../../lib/loadingIndicator';
+import { Keyboard } from 'react-native'
 
 const styles = StyleSheet.create({
   container: { 
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   textInput: {
     color: 'black',
     fontSize: 16,
-    height: 150,
+    height: 120,
     borderWidth: 1,
     borderColor: 'black',
     marginTop: 10,
@@ -523,7 +524,7 @@ export default class IssueItemList extends Component {
     }
     //display list for admin to close the issie
     else if(role === 'admin' && currentIssue){
-      panelHeader = 'Issue on '+ feature;
+      panelHeader = this.state.isPutOnHold?'Put '+feature +' on hold':'Issue on '+ feature;
       if(currentIssue && this.state.issueItems) {
         let currentIssueIdArray = currentIssue.reported_issue.split(',').map(function(item) {
           return parseInt(item, 10);
@@ -597,6 +598,7 @@ export default class IssueItemList extends Component {
                   <Text style={styles.issueText}> Description: { this.state.issueDescription  }</Text>
                 </View>
                 {
+                  ((this.state.selectHoldOption === null) || (this.state.selectHoldOption && this.state.selectHoldOption.name !== 'Other')) &&
                   onHoldOptionList
                 }
                 {
@@ -623,7 +625,7 @@ export default class IssueItemList extends Component {
             issueItemListView = (
               <View>
                 <View style={styles.issueTextView}>
-                  <Text style={styles.issueText}> Diagnosed Issue(s): { diagnosedIssueText  }</Text>
+                  <Text style={styles.issueText}> Diagnosed Issue(s): { currentIssue.diagnosed_issue  }</Text>
                 </View>
                 <View style={styles.issueTextView}>
                   <Text style={styles.issueText}> Description: { currentIssue.description  }</Text>
@@ -890,6 +892,9 @@ export default class IssueItemList extends Component {
           dialogStyle={styles.popupStyle}
           dismissOnTouchOutside={true}
           visible={this.props.showIssueItem}
+          onTouchOutside={() => {
+            Keyboard.dismiss()
+          }}
         >
           <View>
           {

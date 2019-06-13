@@ -79,7 +79,7 @@ export default class Store2 extends Component {
     <TouchableOpacity 
       onPress={
         () => this.showIssueItemList('Pump', selectIssue, value)} 
-        style={[{flex:1}, isReported &&{backgroundColor:'red'},isOnHold && {backgroundColor:'#F58F09'}  ]}>
+        style={[{flex:1}, isReported &&{backgroundColor:'#D73535'},isOnHold && {backgroundColor:'#FDFF00'}  ]}>
       <View style={styles.btn}>
         <Text style={styles.btnText}>{value}</Text>
       </View>
@@ -182,7 +182,7 @@ export default class Store2 extends Component {
       <View style={styles.container}>
         <View style={styles.mapAreaView}>
           <TouchableOpacity 
-            style={[size==='small'?styles.smallStoreView:styles.storeView, storeReported && {backgroundColor:'red'}, storeOnHold&&{backgroundColor:'#F58F09'}]}
+            style={[size==='small'?styles.smallStoreView:styles.storeView, storeReported && {backgroundColor:'#D73535'}, storeOnHold&&{backgroundColor:'#FDFF00'}]}
             onPress={()=>this.showIssueItemList('Store',storeIssue)}
           >
             <Text style={{textAlign:'center'}}>Store</Text>

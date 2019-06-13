@@ -411,7 +411,7 @@ export default class AdminOverViewScreen extends Component {
             </Text>
             <Button
               style={styles.closedIssueBtn}
-              title="See Closed Issue"
+              title="See Closed Issues"
               titleStyle={styles.closedIssueBtnText}
               onPress={()=>{
                 dispatch(NavigationActions.navigate({
