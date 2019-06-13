@@ -175,6 +175,7 @@ export default class ClosedIssueViewScreen extends Component {
     var today = new Date();
     var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     this.state = {
+      firstSearch: 1,
       loading:false,
       startDate:date,
       endDate:date,
@@ -203,7 +204,7 @@ export default class ClosedIssueViewScreen extends Component {
   }
 
   componentDidMount(){
-
+    
     storage.load({
       key: 'apiToken',
     }).then(token => {
@@ -231,6 +232,21 @@ export default class ClosedIssueViewScreen extends Component {
           locationList:data.locations,
           featureList:data.features,
         })
+
+        const { location } = this.props.navigation.state.params;
+        if(location) {
+          data.locations.map( (locationItem) => {
+            if(locationItem.id === location ) {
+              this.setState({
+                selectedLocationText:locationItem.name
+              })
+            }
+          })
+          this.setState({
+            selectedLocation:location,
+          })
+        }
+
       }
       this.setState({loading:false})
     })
@@ -242,7 +258,17 @@ export default class ClosedIssueViewScreen extends Component {
 
 
   search(type) {
-    this.setState({loading:true})
+    const { location } = this.props.navigation.state.params;
+    let searchLocation = null;
+    if(location && this.state.firstSearch === 1) {
+      searchLocation = location
+    } else {
+      searchLocation = this.state.selectedLocation === 0?null:this.state.selectedLocation;
+    }
+    this.setState({
+      loading:true,
+      firstSearch: this.state.firstSearch + 1
+    })
     if(this.state.token) { 
      let params = {
         status:'closed',
@@ -250,7 +276,7 @@ export default class ClosedIssueViewScreen extends Component {
         endDate: this.state.endDate,
         reportedIssue:this.state.selectedReportedIssue === 0?null:this.state.selectedReportedIssue,
         diagnosedIssue:this.state.selectedDiagnosedIssue === 0?null:this.state.selectedDiagnosedIssue,
-        location:this.state.selectedLocation === 0?null:this.state.selectedLocation,
+        location:searchLocation,
         feature:this.state.selectedFeature === 'All Features'?null:this.state.selectedFeature,
         offset:type === 'new'?0:this.state.offset,
         order:this.state.order,
@@ -577,8 +603,7 @@ export default class ClosedIssueViewScreen extends Component {
 
   render(){
     const {dispatch} = this.props.navigation;
-    const {refreshList } = this.props.navigation.state.params;
-
+    const {refreshList, location } = this.props.navigation.state.params;
     return (
       <View style={styles.container}>
         {

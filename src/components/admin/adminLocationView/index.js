@@ -300,6 +300,7 @@ export default class EmployeeScreen extends Component {
                   routeName: 'ClosedIssueViewScreen',
                   params:{ 
                     refreshList:this.props.navigation.state.params.refreshList,
+                    location,
                   }
                 }))
               }}
