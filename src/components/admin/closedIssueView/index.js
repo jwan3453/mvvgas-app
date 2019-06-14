@@ -423,18 +423,34 @@ export default class ClosedIssueViewScreen extends Component {
     let data =  this.state.closedIssueList;
     let order = this.state.order;
 
+    let orderNumber = 1;
     if(sortColumn === this.state.currentColumn) {
-      if(order === 'asc') {
-        order='desc';
-        data = data.sort((a, b) =>  ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
-      } else {
-        order='asc';
-        data = data.sort((a, b) =>  ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  >  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
-      }
+      order = order ==='asc'?'desc':'asc' 
     } else {
-      order='desc';
-      data = data.sort((a, b) =>  ( moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  <  moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? 1 : -1)
+      order = 'asc';
     }
+    orderNumber = order ==='asc'?-1:1
+    data = data.sort((a, b) => {
+      if(sortColumn === 'closedAt') {
+        return (moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  < moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? orderNumber* 1 : orderNumber * -1
+      } else {
+        let sortColumnA = a[sortColumn];
+        let sortColumnB = b[sortColumn];
+        sortColumnA = sortColumnA === null?'':sortColumnA
+        sortColumnB = sortColumnB === null?'':sortColumnB
+
+        if(sortColumn === 'feature') {
+          let matchesA = sortColumnA.match(/\d+/g);
+          let matchesB = sortColumnB.match(/\d+/g);
+          if(matchesA !== null && matchesB !== null) {
+            sortColumnA = parseInt(matchesA[0])
+            sortColumnB = parseInt(matchesB[0])
+          }
+        }
+        
+        return sortColumnA < sortColumnB ? orderNumber* 1 : orderNumber * -1
+      }
+    })
     this.setState({
       closedIssueList:data,
       currentColumn:sortColumn,
@@ -739,33 +755,63 @@ export default class ClosedIssueViewScreen extends Component {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.headCell,{flex:1}]}
+                onPress={() => this.onColumnSort('status')}
               > 
                 <Text>Status</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>         
               <TouchableOpacity 
                 style={[styles.headCell,{flex:2}]}
+                onPress={() => this.onColumnSort('reportedIssueText')}
               > 
                 <Text>Reported Issue</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.headCell,{flex:2}]}
+                onPress={() => this.onColumnSort('diagnosedIssues')}
               >
                 <Text>Diagnosed Issues</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>
               <TouchableOpacity 
                 style={[styles.headCell,{flex:2}]}
+                onPress={() => this.onColumnSort('description')}
               >
                 <Text>Description</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity> 
               <TouchableOpacity 
                 style={[styles.headCell,{flex:1}]}
+                onPress={() => this.onColumnSort('location')}
               >
                 <Text>Location</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>                                 
               <TouchableOpacity style={[styles.headCell,{flex:1}]}
                 style={[styles.headCell,{flex:1}]}
+                onPress={() => this.onColumnSort('feature')}
               >
                 <Text>Feature</Text>
+                <Image 
+                  style={styles.sortIcon}
+                  source={require('../../../lib/images/sort.png')}
+                />
               </TouchableOpacity>
             </View>
 
