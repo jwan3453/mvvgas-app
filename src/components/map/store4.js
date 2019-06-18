@@ -137,7 +137,7 @@ export default class Store2 extends Component {
         showIssueItem:true,
         feature,
       })
-    } else {
+    } else if(this.props.role !== 'employee'){
       this.props.dispatch(NavigationActions.navigate({
       routeName: 'AdminLocationViewScreen',
       params:{ 

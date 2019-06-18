@@ -168,7 +168,7 @@ export default class EmployeeScreen extends Component {
     }
     orderNumber = order ==='asc'?-1:1
     data = data.sort((a, b) => {
-      if(sortColumn === 'create_at') {
+      if(sortColumn === 'created_at') {
         return (moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  < moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? orderNumber* 1 : orderNumber * -1
       } else {
         let sortColumnA = a[sortColumn];

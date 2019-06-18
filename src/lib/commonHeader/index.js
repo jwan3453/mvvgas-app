@@ -114,7 +114,7 @@ export default class CommonHeder extends Component {
                 }))
               }}
             >
-              <Text style={styles.headerBtnStyle}>View All Issues</Text>
+              <Text style={styles.headerBtnStyle}>See Closed Issues</Text>
             </TouchableOpacity>
           }
 

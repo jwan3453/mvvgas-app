@@ -75,7 +75,7 @@ export default class Store1 extends Component {
     }
 
     return (<TouchableOpacity onPress={() => this.showIssueItemList('Pump', selectIssue, value)} style={[{flex:1}, isReported &&{backgroundColor:'#D73535'},isOnHold && {backgroundColor:'#FDFF00'}  ]}>
-      <View style={styles.btn}>
+      <View style={[styles.btn, this.props.size === 'small' && {borderBottomWidth:0.5}]}>
         <Text style={styles.btnText}>{value}</Text>
       </View>
     </TouchableOpacity>)
@@ -120,7 +120,7 @@ export default class Store1 extends Component {
         showIssueItem:true,
         feature,
       })
-    } else {
+    } else if(this.props.role !== 'employee'){
         this.props.dispatch(NavigationActions.navigate({
         routeName: 'AdminLocationViewScreen',
         params:{ 
@@ -179,7 +179,7 @@ export default class Store1 extends Component {
         <View style={styles.mapAreaView}>
           <Table style={size==='small'?styles.smallTableView:styles.tableView}>
             <TableWrapper >
-              <Cols data={this.state.tableData} heightArr={size==='small'?[25, 25, 25, 25, 25,25]:[50, 50, 50, 50, 50,50]} textStyle={styles.text}/>
+              <Cols data={this.state.tableData} heightArr={size==='small'?[30, 30, 30, 30, 30,30]:[50, 50, 50, 50, 50,50]} textStyle={styles.text}/>
             </TableWrapper>
           </Table>
 
