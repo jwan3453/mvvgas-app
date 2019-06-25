@@ -177,8 +177,8 @@ export default class ClosedIssueViewScreen extends Component {
     this.state = {
       firstSearch: 1,
       loading:false,
-      startDate:date,
-      endDate:date,
+      startDate:'',
+      endDate:'',
       issueItemList:null,
       locationList:null,
       featureList:null,
@@ -196,7 +196,7 @@ export default class ClosedIssueViewScreen extends Component {
       token:null,
       order:'asc',
       offset:0,
-      currentColumn:'',
+      currentColumn:'closedAt',
       closedIssueList:null,
       totalIssues:0,
       pageSize:10,
@@ -280,6 +280,7 @@ export default class ClosedIssueViewScreen extends Component {
         feature:this.state.selectedFeature === 'All Features'?null:this.state.selectedFeature,
         offset:type === 'new'?0:this.state.offset,
         order:this.state.order,
+        sort: this.state.currentColumn
       };
 
       if(type === 'new') {
@@ -420,6 +421,7 @@ export default class ClosedIssueViewScreen extends Component {
 
   onColumnSort(sortColumn) 
   {
+
     let data =  this.state.closedIssueList;
     let order = this.state.order;
 
@@ -430,32 +432,32 @@ export default class ClosedIssueViewScreen extends Component {
       order = 'asc';
     }
     orderNumber = order ==='asc'?-1:1
-    data = data.sort((a, b) => {
-      if(sortColumn === 'closedAt') {
-        return (moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  < moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? orderNumber* 1 : orderNumber * -1
-      } else {
-        let sortColumnA = a[sortColumn];
-        let sortColumnB = b[sortColumn];
-        sortColumnA = sortColumnA === null?'':sortColumnA
-        sortColumnB = sortColumnB === null?'':sortColumnB
+    // data = data.sort((a, b) => {
+    //   if(sortColumn === 'closedAt') {
+    //     return (moment(a[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()  < moment(b[sortColumn],'hh:mm:ss a MM/DD/YYYY').unix()) ? orderNumber* 1 : orderNumber * -1
+    //   } else {
+    //     let sortColumnA = a[sortColumn];
+    //     let sortColumnB = b[sortColumn];
+    //     sortColumnA = sortColumnA === null?'':sortColumnA
+    //     sortColumnB = sortColumnB === null?'':sortColumnB
 
-        if(sortColumn === 'feature') {
-          let matchesA = sortColumnA.match(/\d+/g);
-          let matchesB = sortColumnB.match(/\d+/g);
-          if(matchesA !== null && matchesB !== null) {
-            sortColumnA = parseInt(matchesA[0])
-            sortColumnB = parseInt(matchesB[0])
-          }
-        }
+    //     if(sortColumn === 'feature') {
+    //       let matchesA = sortColumnA.match(/\d+/g);
+    //       let matchesB = sortColumnB.match(/\d+/g);
+    //       if(matchesA !== null && matchesB !== null) {
+    //         sortColumnA = parseInt(matchesA[0])
+    //         sortColumnB = parseInt(matchesB[0])
+    //       }
+    //     }
         
-        return sortColumnA < sortColumnB ? orderNumber* 1 : orderNumber * -1
-      }
-    })
+    //     return sortColumnA < sortColumnB ? orderNumber* 1 : orderNumber * -1
+    //   }
+    // })
     this.setState({
       closedIssueList:data,
       currentColumn:sortColumn,
       order,
-    })
+    }, () => this.search('new'))
   }
 
   keyExtractor = (item, index) => index;
@@ -579,7 +581,6 @@ export default class ClosedIssueViewScreen extends Component {
                 i ===(loopNum-1)?styles.lastPageBtn:null,
               ]}
               onPress={()=>{
-                console.warn(i * this.state.pageSize);
                 this.setState({
                   offset:((pageNo-1) * this.state.pageSize)
                 },()=>this.search())
@@ -643,7 +644,7 @@ export default class ClosedIssueViewScreen extends Component {
                   style={{width: 150}}
                   date={this.state.startDate}
                   mode="date"
-                  placeholder={this.state.startDate}
+                  placeholder={'start date'}
                   format="YYYY-MM-DD"
                   confirmBtnText="Confirm"
                   cancelBtnText="Cancel"
@@ -658,7 +659,7 @@ export default class ClosedIssueViewScreen extends Component {
                   style={{width: 170}}
                   date={this.state.endDate}
                   mode="date"
-                  placeholder={this.state.endDate}
+                  placeholder={'end date'}
                   format="YYYY-MM-DD"
                   confirmBtnText="Confirm"
                   cancelBtnText="Cancel"
