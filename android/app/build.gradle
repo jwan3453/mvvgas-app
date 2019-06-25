@@ -102,7 +102,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mvvpump"
+        applicationId "com.pmr"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion 26 //rootProject.ext.targetSdkVersion
         versionCode 1
@@ -113,7 +113,7 @@ android {
     }
     signingConfigs { 
        release { 
-        storeFile file("/Users/jacky/Documents/mvvgas/mvvgas/android/keystores/my-release-key.keystore")
+        storeFile file("/Users/Francine/Desktop/mvvgas-app/android/keystores/my-release-key.keystore")
         storePassword "sitecrafting"
         keyAlias "my-key-alias"
         keyPassword "sitecrafting"
